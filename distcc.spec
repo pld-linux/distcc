@@ -117,7 +117,7 @@ Monitor gtk dla distcc.
 %{__autoconf}
 %{__autoheader}
 %configure \
-	%{?with_gtk:--enable-gnome}
+	%{?with_gnome:--enable-gnome}
 
 %{__make}
 
