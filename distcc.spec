@@ -152,4 +152,4 @@ fi
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/rc-inetd/distccd
 
 %files standalone
-%attr(755,root,root) /etc/rc.d/init.d/distcc
+%attr(754,root,root) /etc/rc.d/init.d/distcc
