@@ -37,10 +37,10 @@ oraz bardzo czêsto dwa lub wiêcej razy szybszy ni¿ lokalna kompilacja.
 %package common
 Summary:	Common files for inetd and standalone versions of distcc
 Summary(pl):	Pliki wspólne dla wersji inetd i standalone distcc
-Group:          Daemons
+Group:		Daemons
 Requires:	gcc
 Requires:	gcc-c++
-Obsoletes:      %{name} < %{name}-2.1-2
+Obsoletes:	%{name} < %{name}-2.1-2
 
 %description common
 distcc is a program to distribute compilation of C or C++ code across
@@ -57,11 +57,11 @@ oraz bardzo czêsto dwa lub wiêcej razy szybszy ni¿ lokalna kompilacja.
 
 %package inetd
 Summary:	inetd configs for distcc
-Summary(pl):    Pliki konfiguracyjne do u¿ycia distcc poprzez inetd
-Group:          Daemons
-PreReq:         %{name}-common = %{version}
-PreReq:         rc-inetd
-Obsoletes:      %{name} < %{name}-2.1-2
+Summary(pl):	Pliki konfiguracyjne do u¿ycia distcc poprzez inetd
+Group:		Daemons
+PreReq:		%{name}-common = %{version}
+PreReq:		rc-inetd
+Obsoletes:	%{name} < %{name}-2.1-2
 
 %description inetd
 distcc configs for running from inetd.
@@ -76,7 +76,7 @@ Group:		Daemons
 PreReq:		%{name}-common = %{version}
 PreReq:		rc-scripts
 Requires(post,preun):	/sbin/chkconfig
-Obsoletes:      %{name} < %{name}-2.1-2
+Obsoletes:	%{name} < %{name}-2.1-2
 
 %description standalone
 distcc configs for running as a standalone daemon.
@@ -91,7 +91,7 @@ standalone.
 
 %build
 %configure \
-	%{!?_without_gtk: --enable-gnome}
+	%{!?_without_gtk:--enable-gnome}
 
 %{__make}
 
