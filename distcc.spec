@@ -21,7 +21,6 @@ Patch0:		%{name}-user.patch
 %{!?_without_gtk:BuildRequires:	gtk+2-devel >= 2.0}
 BuildRequires:	popt-devel
 BuildRequires:	pkgconfig
-BuildRequires:	freetype-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -87,6 +86,28 @@ distcc configs for running as a standalone daemon.
 Pliki konfiguracyjne distcc do startowania demona w trybie
 standalone.
 
+%package monitor
+Summary:        monitor for distcc
+Summary(pl):    Monitor dla distcc
+Group:          Applications
+
+%description monitor
+Monitor for distcc.
+
+%description monitor -l pl
+Monitor dla distcc.
+
+%package monitor-gnome
+Summary:        gtk monitor for distcc
+Summary(pl):    Monitor gtk dla distcc
+Group:          X11/Applications
+
+%description monitor-gnome
+gtk monitor for distcc.
+
+%description monitor-gnome -l pl
+Monitor gtk dla distcc.
+
 %prep
 %setup -q
 %patch -p1
@@ -142,16 +163,27 @@ if [ "$1" = "0" ]; then
 	/sbin/chkconfig --del distcc
 fi
 
-%files common
+%files
 %defattr(644,root,root,755)
 %doc AUTHORS NEWS README *.txt
-%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/distccd
-%attr(755,root,root) %{_bindir}/*
-%attr(644,root,root) %{_mandir}/man?/*
+%attr(755,root,root) %{_bindir}/%{name}
+%attr(644,root,root) %{_mandir}/man?/%{name}.*
 %attr(644,root,root) /etc/profile.d/*sh
+
+%files common
+%defattr(644,root,root,755)
+%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/distccd
+%attr(755,root,root) %{_bindir}/%{name}d
+%attr(644,root,root) %{_mandir}/man?/%{name}d.*
 
 %files inetd
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/rc-inetd/distccd
 
 %files standalone
 %attr(754,root,root) /etc/rc.d/init.d/distcc
+
+%files monitor
+%attr(755,root,root) %{_bindir}/distccmon-text
+
+%{!?_without_gtk:%files monitor-gnome}
+%{!?_without_gtk:%attr(755,root,root) %{_bindir}/distccmon-gnome}
