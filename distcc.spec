@@ -7,7 +7,7 @@ Summary(pl):	Program do rozdzielania kompilacji programów w C lub C++
 Name:		distcc
 Group:		Development/Languages
 Version:	2.11
-Release:	0.9
+Release:	1
 License:	GPL
 Source0:	http://distcc.samba.org/ftp/distcc/%{name}-%{version}.tar.bz2
 # Source0-md5:	f3458779c13255d88ee89ea7ccddda29
@@ -117,7 +117,7 @@ Monitor gtk dla distcc.
 %{__autoconf}
 %{__autoheader}
 %configure \
-	%{?with_gnome:--enable-gnome}
+	%{?with_gnome:--with-gnome}
 
 %{__make}
 
