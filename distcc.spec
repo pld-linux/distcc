@@ -3,7 +3,7 @@ Summary(pl):	Program do rozdzielania kompilacji programów w C lub C++
 Name:		distcc
 Group:		Development/Languages
 Version:	2.2
-Release:	1
+Release:	2
 License:	GPL
 URL:		http://distcc.samba.org
 Source0:	http://distcc.samba.org/ftp/distcc/%{name}-%{version}.tar.bz2
@@ -11,6 +11,7 @@ Source1:	%{name}.inetd
 Source2:	%{name}.init
 Source3:	%{name}.sh
 Source4:	%{name}.csh
+Source5:	%{name}.config
 Patch0:		%{name}-user.patch
 Patch1:		%{name}-hostfile.patch
 Patch2:		%{name}-hostopt.patch
@@ -102,6 +103,7 @@ install -d $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd \
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd/distccd
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/distcc
 install %{SOURCE3} %{SOURCE4} $RPM_BUILD_ROOT/etc/profile.d
+install %{SOURCE5} $RPM_BUILD_ROOT/etc/sysconfig/distcc
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -137,6 +139,7 @@ fi
 %files common
 %defattr(644,root,root,755)
 %doc AUTHORS NEWS README linuxdoc/html/*
+%attr(640,root,root) %config(noreplace) %verify(not size mtime md5 /etc/sysconfig/distcc
 %attr(755,root,root) %{_bindir}/*
 %attr(644,root,root) %{_mandir}/man?/*
 %attr(644,root,root) /etc/profile.d/*sh
