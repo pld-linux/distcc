@@ -21,8 +21,7 @@ Patch0:		%{name}-user.patch
 Patch1:		%{name}-waal.patch
 URL:		http://distcc.samba.org/
 BuildRequires:	autoconf >= 2.53
-%{?with_gnome:BuildRequires:	libgnome-devel >= 2.0}
-%{?with_gnome:BuildRequires:	libgnomeui-devel}
+%{?with_gnome:BuildRequires:	libgnomeui-devel >= 2.0}
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -45,7 +44,7 @@ Summary(pl):	Pliki wspólne dla wersji inetd i standalone distcc
 Group:		Daemons
 Requires:	gcc
 Requires:	gcc-c++
-Obsoletes:	%{name} < %{name}-2.1-2
+Obsoletes:	distcc < 2.1-2
 
 %description common
 distcc is a program to distribute compilation of C or C++ code across
@@ -63,9 +62,9 @@ oraz bardzo czêsto dwa lub wiêcej razy szybszy ni¿ lokalna kompilacja.
 Summary:	inetd configs for distcc
 Summary(pl):	Pliki konfiguracyjne do u¿ycia distcc poprzez inetd
 Group:		Daemons
-PreReq:		%{name}-common = %{version}
+PreReq:		%{name}-common = %{version}-%{release}
 PreReq:		rc-inetd
-Obsoletes:	%{name} < %{name}-2.1-2
+Obsoletes:	distcc < 2.1-2
 
 %description inetd
 distcc configs for running from inetd.
@@ -77,10 +76,10 @@ Pliki konfiguracyjna distcc do startowania demona poprzez inetd.
 Summary:	Standalone daemon configs for distcc
 Summary(pl):	Pliki konfiguracyjne do startowania distcc w trybie standalone
 Group:		Daemons
-PreReq:		%{name}-common = %{version}
+PreReq:		%{name}-common = %{version}-%{release}
 PreReq:		rc-scripts
 Requires(post,preun):	/sbin/chkconfig
-Obsoletes:	%{name} < %{name}-2.1-2
+Obsoletes:	distcc < 2.1-2
 
 %description standalone
 distcc configs for running as a standalone daemon.
@@ -143,7 +142,7 @@ install %{SOURCE6} $RPM_BUILD_ROOT/etc/logrotate.d/distccd
 
 %if %{with gnome}
 mv $RPM_BUILD_ROOT%{_datadir}/%{name}/distccmon-gnome.desktop \
-	$RPM_BUILD_ROOT%{_applnkdir}/Network/Misc
+	$RPM_BUILD_ROOT%{_desktopdir}
 mv $RPM_BUILD_ROOT%{_datadir}/%{name}/distccmon-gnome-icon.png \
 	$RPM_BUILD_ROOT%{_pixmapsdir}
 %endif
@@ -212,7 +211,8 @@ fi
 
 %if %{with gnome}
 %files monitor-gnome
+%defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/distccmon-gnome
-%{_applnkdir}/Network/Misc/*.desktop
-%{_pixmapsdir}/*
+%{_desktopdir}/*.desktop
+%{_pixmapsdir}/*.png
 %endif
