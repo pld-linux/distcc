@@ -3,7 +3,7 @@ Summary(pl):	Program do rozdzielania kompilacji programów w C lub C++
 Name:		distcc
 Group:		Development/Languages
 Version:	2.0.1
-Release:	2
+Release:	3
 License:	GPL
 URL:		http://distcc.samba.org
 Source0:	http://distcc.samba.org/ftp/distcc/%{name}-%{version}.tar.bz2
@@ -12,6 +12,7 @@ Source2:	%{name}.sh
 Source3:	%{name}.csh
 Patch0:		%{name}-user.patch
 Patch1:		%{name}-hostfile.patch
+Patch2:		%{name}-hostopt.patch
 Requires:	gcc
 Requires:	gcc-c++
 Requires:	inetdaemon
@@ -36,6 +37,7 @@ oraz bardzo czêsto dwa lub wiêcej razy szybszy ni¿ lokalna kompilacja.
 
 %patch -p1
 %patch1 -p1
+%patch2 -p0
 
 %build
 %configure
