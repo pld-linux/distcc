@@ -1,7 +1,7 @@
 #
 # Conditional build:
 %bcond_with	gnome	# build without gnome(monitor) support
-
+#
 Summary:	Program to distribute compilation of C or C++
 Summary(pl):	Program do rozdzielania kompilacji programów w C lub C++
 Name:		distcc
@@ -19,13 +19,11 @@ Source5:	%{name}.config
 Source6:	%{name}.logrotate
 Patch0:		%{name}-user.patch
 URL:		http://distcc.samba.org/
+BuildRequires:	autoconf
 %{?with_gtk:BuildRequires:	libgnome-devel >= 2.0}
-%{?with_gtk:BuildRequires:	pkg-config}
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
-
-%define		_vardir		/var
 
 %description
 distcc is a program to distribute compilation of C or C++ code across
@@ -58,7 +56,6 @@ distcc jest programem pozwalaj±cym na dystrybucjê kompilacji C lub C++
 na kilka maszyn w sieci. distcc powinien zawsze generowaæ takie same
 rezultaty jak lokalna kompilacja, jest prosty w instalacji i u¿yciu
 oraz bardzo czêsto dwa lub wiêcej razy szybszy ni¿ lokalna kompilacja.
-
 
 %package inetd
 Summary:	inetd configs for distcc
@@ -128,7 +125,7 @@ Monitor gtk dla distcc.
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{sysconfig/rc-inetd,rc.d/init.d,profile.d,logrotate.d} \
 	$RPM_BUILD_ROOT%{_applnkdir}/Network/Misc $RPM_BUILD_ROOT%{_pixmapsdir} \
-	$RPM_BUILD_ROOT%{_vardir}/log
+	$RPM_BUILD_ROOT%{_var}/log
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -139,14 +136,14 @@ install %{SOURCE3} %{SOURCE4} $RPM_BUILD_ROOT/etc/profile.d
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/sysconfig/distccd
 install %{SOURCE6} $RPM_BUILD_ROOT/etc/logrotate.d/distccd
 
-%if 0%{with gnome}
+%if %{with gnome}
 mv $RPM_BUILD_ROOT%{_datadir}/distccmon-gnome.desktop \
 	$RPM_BUILD_ROOT%{_applnkdir}/Network/Misc
 mv $RPM_BUILD_ROOT%{_datadir}/distccmon-gnome-icon.png \
 	$RPM_BUILD_ROOT%{_pixmapsdir}
 %endif
 
-touch $RPM_BUILD_ROOT%{_vardir}/log/distcc
+touch $RPM_BUILD_ROOT%{_var}/log/distcc
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -183,28 +180,29 @@ fi
 %defattr(644,root,root,755)
 %doc AUTHORS NEWS README *.txt
 %attr(755,root,root) %{_bindir}/%{name}
-%attr(644,root,root) %{_mandir}/man?/%{name}.*
-%attr(644,root,root) /etc/profile.d/*sh
+%{_mandir}/man?/%{name}.*
+/etc/profile.d/*sh
 
 %files common
 %defattr(644,root,root,755)
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/distccd
-%attr(640,root,root) %ghost %{_vardir}/log/distcc
+%attr(640,root,root) %ghost %{_var}/log/distcc
 %attr(640,root,root) /etc/logrotate.d/distccd
 %attr(755,root,root) %{_bindir}/%{name}d
-%attr(644,root,root) %{_mandir}/man?/%{name}d.*
+%{_mandir}/man?/%{name}d.*
 
 %files inetd
+%defattr(644,root,root,755)
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/rc-inetd/distccd
 
 %files standalone
+%defattr(644,root,root,755)
 %attr(754,root,root) /etc/rc.d/init.d/distcc
 
 %files monitor
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/distccmon-text
-
-%if 0%{with gnome}
+%if %{with gnome}
 %attr(755,root,root) %{_bindir}/distccmon-gnome
 %{_applnkdir}/Network/Misc/*.desktop
 %{_pixmapsdir}/*
