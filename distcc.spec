@@ -2,8 +2,8 @@ Summary:	Program to distribute compilation of C or C++
 Summary(pl):	Program do rozdzielania kompilacji programów w C lub C++
 Name:		distcc
 Group:		Development/Languages
-Version:	1.2
-Release:	2
+Version:	1.2.3
+Release:	1
 License:	GPL
 URL:		http://distcc.samba.org
 Source0:	http://distcc.samba.org/ftp/distcc/%{name}-%{version}.tar.bz2
@@ -63,7 +63,7 @@ rm -rf ${RPM_BUILD_ROOT}
 
 %files
 %defattr(644,root,root,755)
-%doc AUTHORS NEWS OLDNEWS README linuxdoc/html/*
+%doc AUTHORS NEWS README linuxdoc/html/*
 %attr(755,root,root) %{_bindir}/*
 %attr(644,root,root) %{_mandir}/man?/*
 %attr(640,root,root) /etc/sysconfig/rc-inetd/distccd
