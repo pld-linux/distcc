@@ -113,10 +113,10 @@ Summary(pl):	Monitor GTK+ dla distcc
 Group:		X11/Applications
 
 %description monitor-gnome
-gtk monitor for distcc.
+GTK+ monitor for distcc.
 
 %description monitor-gnome -l pl
-Monitor gtk dla distcc.
+Monitor GTK+ dla distcc.
 
 %prep
 %setup -q
