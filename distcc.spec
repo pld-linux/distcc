@@ -103,7 +103,7 @@ install -d $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd \
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd/distccd
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/distcc
 install %{SOURCE3} %{SOURCE4} $RPM_BUILD_ROOT/etc/profile.d
-install %{SOURCE5} $RPM_BUILD_ROOT/etc/sysconfig/distcc
+install %{SOURCE5} $RPM_BUILD_ROOT/etc/sysconfig/distccd
 
 %clean
 rm -rf $RPM_BUILD_ROOT
