@@ -1,11 +1,11 @@
---- distcc-1.2/src/setuid.c.orig	Sun Mar  2 13:03:08 2003
-+++ distcc-1.2/src/setuid.c	Sun Mar  2 13:03:18 2003
-@@ -36,7 +36,7 @@
+--- distcc-1.2.3/src/setuid.c.orig	Sat Mar  1 13:43:48 2003
++++ distcc-1.2.3/src/setuid.c	Mon Mar 10 23:55:36 2003
+@@ -35,7 +35,7 @@
  #include "exitcode.h"
  
  
--char *opt_user = "distcc";
-+char *opt_user = "nobody";
+-const char *opt_user = "distcc";
++const char *opt_user = "nobody";
  
  
  /**
