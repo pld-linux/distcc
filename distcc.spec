@@ -48,7 +48,7 @@ several machines on a network. distcc should always generate the same
 results as a local compile, is simple to install and use, and is often
 two or more times faster than a local compile.
 
-%description -l pl common
+%description common -l pl
 distcc jest programem pozwalaj±cym na dystrybucjê kompilacji C lub C++
 na kilka maszyn w sieci. distcc powinien zawsze generowaæ takie same
 rezultaty jak lokalna kompilacja, jest prosty w instalacji i u¿yciu
