@@ -45,8 +45,14 @@ Summary(pl):	Pliki wspólne dla wersji inetd i standalone distcc
 Group:		Daemons
 Requires:	gcc
 Requires:	gcc-c++
+Requires(pre):	/bin/id
+Requires(pre):	/usr/bin/getgid
+Requires(pre):	/usr/sbin/groupadd
 Requires(pre): 	/usr/sbin/useradd
+Requires(postun):	/usr/sbin/groupdel
 Requires(postun):	/usr/sbin/userdel
+Provides:	group(distcc)
+Provides:	user(distcc)
 Obsoletes:	distcc < 2.1-2
 
 %description common
@@ -91,9 +97,9 @@ Pliki konfiguracyjne distcc do startowania demona w trybie
 standalone.
 
 %package monitor
-Summary:        Monitor for distcc
-Summary(pl):    Monitor dla distcc
-Group:          Applications
+Summary:	Monitor for distcc
+Summary(pl):	Monitor dla distcc
+Group:		Applications
 
 %description monitor
 Monitor for distcc.
@@ -102,9 +108,9 @@ Monitor for distcc.
 Monitor dla distcc.
 
 %package monitor-gnome
-Summary:        gtk monitor for distcc
-Summary(pl):    Monitor gtk dla distcc
-Group:          X11/Applications
+Summary:	GTK+ monitor for distcc
+Summary(pl):	Monitor GTK+ dla distcc
+Group:		X11/Applications
 
 %description monitor-gnome
 gtk monitor for distcc.
@@ -155,13 +161,13 @@ touch $RPM_BUILD_ROOT%{_var}/log/distcc
 rm -rf $RPM_BUILD_ROOT
 
 %pre common
-if [ -n "`getgid distcc`" ]; then
-        if [ "`getgid distcc`" != "137" ]; then
-                echo "Error: group distcc doesn't have gid=137. Correct this before installing distccd." 1>&2
-                exit 1
-        fi
+if [ -n "`/usr/bin/getgid distcc`" ]; then
+	if [ "`/usr/bin/getgid distcc`" != "137" ]; then
+		echo "Error: group distcc doesn't have gid=137. Correct this before installing distccd." 1>&2
+		exit 1
+	fi
 else
-        /usr/sbin/groupadd -g 137 -r -f distcc
+	/usr/sbin/groupadd -g 137 distcc 1>&2
 fi
 if [ -n "`/bin/id -u distcc 2>/dev/null`" ]; then
 	if [ "`/bin/id -u distcc`" != "137" ]; then
@@ -169,13 +175,14 @@ if [ -n "`/bin/id -u distcc 2>/dev/null`" ]; then
 		exit 1
 	fi
 else
-	/usr/sbin/useradd -u 137 -d /tmp -s /bin/false -c "distcc user" -g distcc distcc 1>&2
+	/usr/sbin/useradd -u 137 -d /tmp -s /bin/false -c "distcc user" \
+		-g distcc distcc 1>&2
 fi
 
 %postun common
 if [ "$1" = "0" ]; then
-        %userremove distcc
-        %groupremove distcc
+	%userremove distcc
+	%groupremove distcc
 fi
 
 %post inetd
