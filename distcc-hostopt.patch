@@ -1,32 +1,3 @@
-Index: linuxdoc/distcc.sgml
---- linuxdoc/distcc.sgml	28 Mar 2003 06:33:09 -0000	1.103
-+++ linuxdoc/distcc.sgml	2 Apr 2003 02:42:26 -0000
-@@ -597,17 +597,19 @@
- 	  volunteer machines are available to run jobs.  This is a
- 	  space-separated list of host specifications, each of which
- 	  has the syntax:
--<tscreen><verb>HOSTNAME[/MAX_JOBS][:PORT]</verb></tscreen>
--
--	<p>
--	  You can specify the maximum number of jobs that the host
--	  should receive by affixing a number after a slash (e.g.
--	  "localhost/2").
-+<tscreen><verb>HOSTNAME[:PORT][,OPT...]</verb></tscreen>
- 
- 	<p>
- 	  A numeric TCP port may optionally be specified after a
- 	  colon.  If no port is specified, it uses the default, which
- 	  is currently 3632.
-+
-+	<p>
-+	  You can specify one or more host-specific options at the end of the
-+	  host-spec by appending each one after a comma.  The current option
-+	  is slots=N (abbreviated as just N, if desired).
-+	  The "slots" option specifies the maximum number of jobs that the
-+	  associated host should be given simultaneously (e.g. "localhost,2").
- 
- 	<p>
- 	  If only one invocation of distcc runs at a time, it will
 --- src/distcc.c.orig	Mon May  5 07:25:00 2003
 +++ src/distcc.c	Mon May  5 21:07:30 2003
 @@ -117,8 +117,14 @@
@@ -206,3 +177,28 @@ Index: linuxdoc/distcc.sgml
              if ((ret = dcc_parse_localhost(curr, token_start)) != 0)
                  return ret;
          } else if (has_at) {
+--- linuxdoc/distcc.sgml.orig	Fri May 16 08:43:29 2003
++++ linuxdoc/distcc.sgml	Sat May 17 21:38:13 2003
+@@ -174,7 +174,7 @@
+ 	      On the client, set the <tt>DISTCC_HOSTS</tt> environment
+ 	      variable to indicate which volunteer machines to use.
+ 	      For example:
+-	      <tscreen><verb>DISTCC_HOSTS='angry toey:4202 localhost'</verb></tscreen>
++	    <tscreen><verb>HOSTNAME[:PORT][,OPT...]</verb></tscreen>
+ 	      
+ 	    <item>
+ 	      Set the <tt>CC</tt> variable or edit Makefiles to prefix
+@@ -182,6 +182,13 @@
+ 	      <tscreen><verb>distcc gcc -o hello.o -c hello.c</verb></tscreen>
+ 	  </enum>
+ 	</p>
++
++       <p>
++         You can specify one or more host-specific options at the end of the
++         host-spec by appending each one after a comma.  The current option
++         is slots=N (abbreviated as just N, if desired).
++         The "slots" option specifies the maximum number of jobs that the
++         associated host should be given simultaneously (e.g. "localhost,2").
+       </sect>
+ 
+ 
