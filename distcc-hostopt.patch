@@ -27,12 +27,11 @@ Index: linuxdoc/distcc.sgml
  
  	<p>
  	  If only one invocation of distcc runs at a time, it will
-Index: src/distcc.c
---- src/distcc.c	31 Mar 2003 08:17:26 -0000	1.166
-+++ src/distcc.c	2 Apr 2003 02:42:26 -0000
-@@ -114,8 +114,14 @@
+--- src/distcc.c.orig	Mon May  5 07:25:00 2003
++++ src/distcc.c	Mon May  5 21:07:30 2003
+@@ -117,8 +117,14 @@
+ "Each host can be given in any of these forms:\n"
  "\n"
- "Host specifications:\n"
  "   localhost                  run in place\n"
 -"   HOST                       TCP connection, port %d\n"
 -"   HOST:PORT                  TCP connection, specified port\n"
@@ -44,15 +43,14 @@ Index: src/distcc.c
 +"\n"
 +"Hostname examples:\n"
 +"   foo   foo:4242   foo,4   bar:4100,2   bar,slots=3\n"
+ "   @HOST                      SSH connection\n"
+ "   USER$HOST                  SSH connection to specified host\n"
  "\n"
- "distcc distributes compilation jobs across volunteer machines running\n"
- "distccd.  Jobs that cannot be distributed, such as linking or \n"
-Index: src/hosts.c
---- src/hosts.c	31 Mar 2003 07:42:28 -0000	1.29
-+++ src/hosts.c	2 Apr 2003 02:42:27 -0000
-@@ -157,21 +157,43 @@
-     return 0;
+--- src/hosts.c.orig	Mon May  5 06:59:53 2003
++++ src/hosts.c	Mon May  5 21:01:23 2003
+@@ -176,21 +176,43 @@
  }
+ 
  
 -static int dcc_parse_multiplier(const char **psrc, struct dcc_hostdef *hostdef)
 +static int dcc_parse_options(const char **psrc, struct dcc_hostdef *hostdef)
@@ -103,8 +101,8 @@ Index: src/hosts.c
      }
      return 0;
  }
-@@ -189,7 +211,7 @@
-     assert(token[0] == '@');
+@@ -211,7 +233,7 @@
+ 
      token++;
  
 -    if ((ret = dcc_dup_part(&token, &hostdef->hostname, "/: \t\n\f")) != 0)
@@ -112,7 +110,7 @@ Index: src/hosts.c
          return ret;
  
      if (!hostdef->hostname) {
-@@ -198,15 +220,15 @@
+@@ -220,15 +242,15 @@
          return EXIT_BAD_HOSTSPEC;
      }
  
@@ -133,7 +131,7 @@ Index: src/hosts.c
      hostdef->mode = DCC_MODE_SSH;
      return 0;
  }
-@@ -219,7 +241,7 @@
+@@ -241,7 +263,7 @@
      int ret;
      const char *token = token_start;
      
@@ -142,7 +140,7 @@ Index: src/hosts.c
          return ret;
  
      if (!hostdef->hostname) {
-@@ -228,14 +250,11 @@
+@@ -250,14 +272,11 @@
          return EXIT_BAD_HOSTSPEC;
      }
  
@@ -158,7 +156,7 @@ Index: src/hosts.c
              return ret;
          
          if (port_str) {
-@@ -248,7 +267,10 @@
+@@ -270,7 +289,10 @@
              free(port_str);
          }
      }
@@ -170,7 +168,7 @@ Index: src/hosts.c
      hostdef->mode = DCC_MODE_TCP;
      return 0;
  }
-@@ -257,13 +279,13 @@
+@@ -279,13 +301,13 @@
  static int dcc_parse_localhost(struct dcc_hostdef *hostdef,
                                 const char * token_start)
  {
@@ -186,7 +184,7 @@ Index: src/hosts.c
  }
  
  
-@@ -294,7 +316,7 @@
+@@ -316,7 +338,7 @@
       * definition.  We then duplicate the relevant subcomponents into
       * the relevant fields. */
      while (1) {
@@ -195,16 +193,16 @@ Index: src/hosts.c
          const char *token_start;
          int has_at;
          
-@@ -326,8 +348,10 @@
+@@ -347,8 +369,10 @@
+             
          has_at = (memchr(token_start, '@', token_len) != NULL);
-         /* TODO: Call a separate function to split each type up, then
-          * link the result into the list. */
+ 
 -        if (!strncmp(token_start, "localhost", token_len)
 -            || !strncmp(token_start, "localhost/", strlen("localhost/"))) {
-+        if (token_len >= (sizeof "localhost")-1
-+            && strncmp(token_start, "localhost", (sizeof "localhost")-1) == 0
-+            && (token_len == (sizeof "localhost")-1
-+             || token_start[(sizeof "localhost")-1] == ',')) {
++	if (token_len >= (sizeof "localhost")-1
++			&& strncmp(token_start, "localhost", (sizeof "localhost")-1) == 0
++			&& (token_len == (sizeof "localhost")-1
++			|| token_start[(sizeof "localhost")-1] == ',')) {
              if ((ret = dcc_parse_localhost(curr, token_start)) != 0)
                  return ret;
          } else if (has_at) {
