@@ -20,6 +20,8 @@ Source5:	%{name}.config
 Patch0:		%{name}-user.patch
 %{!?_without_gtk:BuildRequires:	gtk+2-devel >= 2.0}
 BuildRequires:	popt-devel
+BuildRequires:	pkgconfig
+BuildRequires:	freetype-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
