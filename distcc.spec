@@ -71,7 +71,7 @@ distcc configs for running from inetd.
 Pliki konfiguracyjna distcc do startowania demona poprzez inetd.
 
 %package standalone
-Summary:	standalone daemon configs for distcc
+Summary:	Standalone daemon configs for distcc
 Summary(pl):	Pliki konfiguracyjne do startowania distcc w trybie standalone
 Group:		Daemons
 PreReq:		%{name}-common = %{version}
