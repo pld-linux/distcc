@@ -1,0 +1,210 @@
+Index: linuxdoc/distcc.sgml
+--- linuxdoc/distcc.sgml	28 Mar 2003 06:33:09 -0000	1.103
++++ linuxdoc/distcc.sgml	2 Apr 2003 02:42:26 -0000
+@@ -597,17 +597,19 @@
+ 	  volunteer machines are available to run jobs.  This is a
+ 	  space-separated list of host specifications, each of which
+ 	  has the syntax:
+-<tscreen><verb>HOSTNAME[/MAX_JOBS][:PORT]</verb></tscreen>
+-
+-	<p>
+-	  You can specify the maximum number of jobs that the host
+-	  should receive by affixing a number after a slash (e.g.
+-	  "localhost/2").
++<tscreen><verb>HOSTNAME[:PORT][,OPT...]</verb></tscreen>
+ 
+ 	<p>
+ 	  A numeric TCP port may optionally be specified after a
+ 	  colon.  If no port is specified, it uses the default, which
+ 	  is currently 3632.
++
++	<p>
++	  You can specify one or more host-specific options at the end of the
++	  host-spec by appending each one after a comma.  The current option
++	  is slots=N (abbreviated as just N, if desired).
++	  The "slots" option specifies the maximum number of jobs that the
++	  associated host should be given simultaneously (e.g. "localhost,2").
+ 
+ 	<p>
+ 	  If only one invocation of distcc runs at a time, it will
+Index: src/distcc.c
+--- src/distcc.c	31 Mar 2003 08:17:26 -0000	1.166
++++ src/distcc.c	2 Apr 2003 02:42:26 -0000
+@@ -114,8 +114,14 @@
+ "\n"
+ "Host specifications:\n"
+ "   localhost                  run in place\n"
+-"   HOST                       TCP connection, port %d\n"
+-"   HOST:PORT                  TCP connection, specified port\n"
++"   HOST[:PORT][,OPT...]       TCP connection (default port=%d)\n"
++"\n"
++"OPT Values:\n"
++"   slots=N                    Maximum of N simultaneous jobs allowed\n"
++"   N                          Abbreviation of the slots=N option\n"
++"\n"
++"Hostname examples:\n"
++"   foo   foo:4242   foo,4   bar:4100,2   bar,slots=3\n"
+ "\n"
+ "distcc distributes compilation jobs across volunteer machines running\n"
+ "distccd.  Jobs that cannot be distributed, such as linking or \n"
+Index: src/hosts.c
+--- src/hosts.c	31 Mar 2003 07:42:28 -0000	1.29
++++ src/hosts.c	2 Apr 2003 02:42:27 -0000
+@@ -157,21 +157,43 @@
+     return 0;
+ }
+ 
+-static int dcc_parse_multiplier(const char **psrc, struct dcc_hostdef *hostdef)
++static int dcc_parse_options(const char **psrc, struct dcc_hostdef *hostdef)
+ {
+-    char *mul;
+-    const char *token = *psrc;
++    char *opt, *arg;
++    const char *token;
+     int ret;
+ 
+-    if ((*psrc)[0] == '/') {
+-        (*psrc)++;
+-        if ((ret = dcc_dup_part(psrc, &mul, "/: \t\n\f")) != 0)
++    while ((*psrc)[0] == ',') {
++        token = (*psrc)++;
++        if ((ret = dcc_dup_part(psrc, &opt, ", \t\n\f")) != 0)
+             return ret;
+-        if (!mul || atoi(mul) == 0) {
+-            rs_log_error("bad multiplier \"%s\" in host specification", token);
++        if (opt) {
++            if ((arg = strchr(opt, '=')) != NULL)
++                *arg++ = '\0';
++            else if (isdigit(*opt)) {
++                arg = opt;
++                opt = NULL;
++            }
++            else
++                arg = NULL;
++        }
++        else
++            arg = NULL;
++        if (!arg) {
++            rs_log_error("malformed option in host specification: \"%s\"", token);
++            return EXIT_BAD_HOSTSPEC;
++        }
++        if (!opt || strcmp(opt, "slots") == 0) {
++            hostdef->n_slots = atoi(arg);
++            if (hostdef->n_slots <= 0) {
++                rs_log_error("invalid number of slots in host specification: \"%s\"", token);
++                return EXIT_BAD_HOSTSPEC;
++            }
++        }
++        else {
++            rs_log_error("unknown option in host specification: \"%s\"", token);
+             return EXIT_BAD_HOSTSPEC;
+         }
+-        hostdef->n_slots = atoi(mul);
+     }
+     return 0;
+ }
+@@ -189,7 +211,7 @@
+     assert(token[0] == '@');
+     token++;
+ 
+-    if ((ret = dcc_dup_part(&token, &hostdef->hostname, "/: \t\n\f")) != 0)
++    if ((ret = dcc_dup_part(&token, &hostdef->hostname, ",: \t\n\f")) != 0)
+         return ret;
+ 
+     if (!hostdef->hostname) {
+@@ -198,15 +220,15 @@
+         return EXIT_BAD_HOSTSPEC;
+     }
+ 
+-    if ((ret = dcc_parse_multiplier(&token, hostdef)) != 0)
+-        return ret;
+-
+     if (token[0] == ':') {
+         token++;
+-        if ((ret = dcc_dup_part(&token, &hostdef->ssh_command, " \t\n\f")) != 0)
++        if ((ret = dcc_dup_part(&token, &hostdef->ssh_command, ", \t\n\f")) != 0)
+             return ret;
+     }
+-    
++
++    if ((ret = dcc_parse_options(&token, hostdef)) != 0)
++        return ret;
++
+     hostdef->mode = DCC_MODE_SSH;
+     return 0;
+ }
+@@ -219,7 +241,7 @@
+     int ret;
+     const char *token = token_start;
+     
+-    if ((ret = dcc_dup_part(&token, &hostdef->hostname, "/: \t\n\f")) != 0)
++    if ((ret = dcc_dup_part(&token, &hostdef->hostname, ",: \t\n\f")) != 0)
+         return ret;
+ 
+     if (!hostdef->hostname) {
+@@ -228,14 +250,11 @@
+         return EXIT_BAD_HOSTSPEC;
+     }
+ 
+-    if ((ret = dcc_parse_multiplier(&token, hostdef)) != 0)
+-        return ret;
+-
+     hostdef->port = dcc_default_port;
+     if (token[0] == ':') {
+         token++;
+ 
+-        if ((ret = dcc_dup_part(&token, &port_str, " \t\n\f")) != 0)
++        if ((ret = dcc_dup_part(&token, &port_str, ", \t\n\f")) != 0)
+             return ret;
+         
+         if (port_str) {
+@@ -248,7 +267,10 @@
+             free(port_str);
+         }
+     }
+-        
++
++    if ((ret = dcc_parse_options(&token, hostdef)) != 0)
++        return ret;
++
+     hostdef->mode = DCC_MODE_TCP;
+     return 0;
+ }
+@@ -257,13 +279,13 @@
+ static int dcc_parse_localhost(struct dcc_hostdef *hostdef,
+                                const char * token_start)
+ {
+-    const char *token = token_start + strlen("localhost");
++    const char *token = token_start + (sizeof "localhost") - 1;
+ 
+     hostdef->mode = DCC_MODE_LOCAL;
+     hostdef->hostname = strdup("localhost");
+     hostdef->n_slots = 1;
+     
+-    return dcc_parse_multiplier(&token, hostdef);
++    return dcc_parse_options(&token, hostdef);
+ }
+ 
+ 
+@@ -294,7 +316,7 @@
+      * definition.  We then duplicate the relevant subcomponents into
+      * the relevant fields. */
+     while (1) {
+-        int token_len;
++        unsigned int token_len;
+         const char *token_start;
+         int has_at;
+         
+@@ -326,8 +348,10 @@
+         has_at = (memchr(token_start, '@', token_len) != NULL);
+         /* TODO: Call a separate function to split each type up, then
+          * link the result into the list. */
+-        if (!strncmp(token_start, "localhost", token_len)
+-            || !strncmp(token_start, "localhost/", strlen("localhost/"))) {
++        if (token_len >= (sizeof "localhost")-1
++            && strncmp(token_start, "localhost", (sizeof "localhost")-1) == 0
++            && (token_len == (sizeof "localhost")-1
++             || token_start[(sizeof "localhost")-1] == ',')) {
+             if ((ret = dcc_parse_localhost(curr, token_start)) != 0)
+                 return ret;
+         } else if (has_at) {
