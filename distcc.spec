@@ -60,9 +60,8 @@ rm -rf ${RPM_BUILD_ROOT}
 
 %files
 %defattr(644,root,root,755)
-%doc AUTHORS NEWS OLDNEWS README
+%doc AUTHORS NEWS OLDNEWS README linuxdoc/html/*
 %attr(755,root,root) %{_bindir}/*
 %attr(644,root,root) %{_mandir}/man?/*
-#%attr(644,root,root) %{_defaultdocdir}/*
 %attr(640,root,root) /etc/sysconfig/rc-inetd/distccd
 %{_infodir}/distcc*
