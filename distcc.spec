@@ -1,6 +1,6 @@
 #
 # Conditional build:
-%bcond_with	gnome	# build with gnome(monitor) support
+%bcond_without	gnome	# build without gnome(monitor) support
 #
 Summary:	Program to distribute compilation of C or C++
 Summary(pl):	Program do rozdzielania kompilacji programów w C lub C++
@@ -193,6 +193,7 @@ fi
 %attr(640,root,root) /etc/logrotate.d/distccd
 %attr(755,root,root) %{_bindir}/%{name}d
 %{_mandir}/man?/%{name}d.*
+%attr(640,nobody,root) %ghost %{_var}/log/distcc
 
 %files inetd
 %defattr(644,root,root,755)
