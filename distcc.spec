@@ -7,7 +7,7 @@ Summary(pl):	Program do rozdzielania kompilacji programów w C lub C++
 Name:		distcc
 Group:		Development/Languages
 Version:	2.11
-Release:	1
+Release:	2
 License:	GPL
 Source0:	http://distcc.samba.org/ftp/distcc/%{name}-%{version}.tar.bz2
 # Source0-md5:	f3458779c13255d88ee89ea7ccddda29
@@ -16,6 +16,7 @@ Source2:	%{name}.init
 Source3:	%{name}.sh
 Source4:	%{name}.csh
 Source5:	%{name}.config
+Source6:	%{name}.logrotate
 Patch0:		%{name}-user.patch
 URL:		http://distcc.samba.org/
 %{?with_gtk:BuildRequires:	libgnome-devel >= 2.0}
@@ -23,6 +24,8 @@ URL:		http://distcc.samba.org/
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+
+%define		_vardir		/var
 
 %description
 distcc is a program to distribute compilation of C or C++ code across
@@ -123,8 +126,9 @@ Monitor gtk dla distcc.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/etc/{sysconfig/rc-inetd,rc.d/init.d,profile.d} \
-	$RPM_BUILD_ROOT%{_applnkdir}/Network/Misc $RPM_BUILD_ROOT%{_pixmapsdir}
+install -d $RPM_BUILD_ROOT/etc/{sysconfig/rc-inetd,rc.d/init.d,profile.d,logrotate.d} \
+	$RPM_BUILD_ROOT%{_applnkdir}/Network/Misc $RPM_BUILD_ROOT%{_pixmapsdir} \
+	$RPM_BUILD_ROOT%{_vardir}/log
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -133,6 +137,7 @@ install %{SOURCE1} $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd/distccd
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/distcc
 install %{SOURCE3} %{SOURCE4} $RPM_BUILD_ROOT/etc/profile.d
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/sysconfig/distccd
+install %{SOURCE6} $RPM_BUILD_ROOT/etc/logrotate.d/distccd
 
 %if 0%{with gnome}
 mv $RPM_BUILD_ROOT%{_datadir}/distccmon-gnome.desktop \
@@ -141,6 +146,7 @@ mv $RPM_BUILD_ROOT%{_datadir}/distccmon-gnome-icon.png \
 	$RPM_BUILD_ROOT%{_pixmapsdir}
 %endif
 
+touch $RPM_BUILD_ROOT%{_vardir}/log/distcc
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -183,6 +189,8 @@ fi
 %files common
 %defattr(644,root,root,755)
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/distccd
+%attr(640,root,root) %ghost %{_vardir}/log/distcc
+%attr(755,root,root) /etc/logrotate.d/distccd
 %attr(755,root,root) %{_bindir}/%{name}d
 %attr(644,root,root) %{_mandir}/man?/%{name}d.*
 
