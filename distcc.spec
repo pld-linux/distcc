@@ -7,7 +7,7 @@ Summary(pl):	Program do rozdzielania kompilacji programów w C lub C++
 Name:		distcc
 Group:		Development/Languages
 Version:	2.18
-Release:	0.1
+Release:	0.2
 License:	GPL
 Source0:	http://distcc.samba.org/ftp/distcc/%{name}-%{version}.tar.bz2
 # Source0-md5:	a55b547d4ff62d8500e290b82671db50
@@ -65,6 +65,8 @@ Summary(pl):	Pliki konfiguracyjne do u¿ycia distcc poprzez inetd
 Group:		Daemons
 PreReq:		%{name}-common = %{version}-%{release}
 PreReq:		rc-inetd
+Requires(pre):	/usr/sbin/useradd
+Requires(postun):	/usr/sbin/userdel
 Obsoletes:	distcc < 2.1-2
 
 %description inetd
@@ -79,7 +81,8 @@ Summary(pl):	Pliki konfiguracyjne do startowania distcc w trybie standalone
 Group:		Daemons
 PreReq:		%{name}-common = %{version}-%{release}
 PreReq:		rc-scripts
-Requires(post,preun):	/sbin/chkconfig
+Requires(pre):	/usr/sbin/useradd
+Requires(postun):	/usr/sbin/userdel
 Obsoletes:	distcc < 2.1-2
 
 %description standalone
@@ -153,6 +156,16 @@ touch $RPM_BUILD_ROOT%{_var}/log/distcc
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%pre inetd
+if [ -n "`/bin/id -u distcc 2>/dev/null`" ]; then
+	if [ "`/bin/id -u distcc`" != "137" ]; then
+		echo "Error: user distcc doesn't have uid=137. Correct this before installing distccd server." 1>&2
+		exit 1
+	fi
+else
+	/usr/sbin/useradd -u 137 -d /tmp -s /bin/false -c "distcc user" -g distcc distcc 1>&2
+fi
+
 %post inetd
 if [ -f /var/lock/subsys/rc-inetd ]; then
 	/etc/rc.d/init.d/rc-inetd reload 1>&2
@@ -164,6 +177,19 @@ fi
 if [ -f /var/lock/subsys/rc-inetd ]; then
 	/etc/rc.d/init.d/rc-inetd reload
 fi
+if [ "$1" = "0" ]; then
+        %userremove distcc
+fi
+
+%pre standalone
+if [ -n "`/bin/id -u distcc 2>/dev/null`" ]; then
+	if [ "`/bin/id -u distcc`" != "137" ]; then
+		echo "Error: user distcc doesn't have uid=137. Correct this before installing distccd server." 1>&2
+		exit 1
+	fi
+else
+	/usr/sbin/useradd -u 137 -d /tmp -s /bin/false -c "distccd user" -g distcc distcc 1>&2
+fi
 
 %post standalone
 /sbin/chkconfig --add distcc
@@ -171,6 +197,11 @@ if [ -f /var/lock/subsys/distccd ]; then
 	/etc/rc.d/init.d/distcc restart 1>&2
 else
 	echo "Run \"/etc/rc.d/init.d/distcc start\" to start distcc daemon."
+fi
+
+%postun standalone
+if [ "$1" = "0" ]; then
+	%userremove distcc
 fi
 
 %preun standalone
@@ -194,7 +225,7 @@ fi
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/logrotate.d/distccd
 %attr(755,root,root) %{_bindir}/%{name}d
 %{_mandir}/man?/%{name}d.*
-%attr(640,nobody,root) %ghost %{_var}/log/distcc
+%attr(640,distcc,root) %ghost %{_var}/log/distcc
 
 %files inetd
 %defattr(644,root,root,755)
