@@ -40,7 +40,7 @@ case "$1" in
 	# Check if the service is already running?
 	if [ ! -f /var/lock/subsys/distccd ]; then
 		msg_starting distccd
-		daemon /usr/bin/distccd --daemon --user nobody --log-file /var/log/distcc `for ip in $DISTCC_HOSTS_ALLOW; do echo -n "--allow $ip "; done` /var/log/distcc $DISTCC_OPTS
+		daemon /usr/bin/distccd --daemon --user nobody --log-file /var/log/distcc `for ip in $DISTCC_HOSTS_ALLOW; do echo -n "--allow $ip "; done` $DISTCC_OPTS
 		RETVAL=$?
 		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/distccd		
 	else
