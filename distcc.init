@@ -38,7 +38,7 @@ case "$1" in
 	# Check if the service is already running?
 	if [ ! -f /var/lock/subsys/distccd ]; then
 		msg_starting distccd
-		daemon /usr/bin/distccd 
+		daemon /usr/bin/distccd --user nobody --allow $HOSTS_ALLOW
 		RETVAL=$?
 		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/distccd		
 	else
