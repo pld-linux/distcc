@@ -117,6 +117,7 @@ Monitor gtk dla distcc.
 #%patch1 -p1
 
 %build
+sed -i -e 's#PKGDATADIR#"%{_pixmapsdir}"#g' src/mon-gnome.c
 %{__autoconf}
 %{__autoheader}
 %configure \
@@ -208,7 +209,9 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/distccmon-text
 %{_mandir}/man1/distccmon-text.*
+
 %if %{with gnome}
+%files monitor-gnome
 %attr(755,root,root) %{_bindir}/distccmon-gnome
 %{_applnkdir}/Network/Misc/*.desktop
 %{_pixmapsdir}/*
