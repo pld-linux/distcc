@@ -7,7 +7,7 @@ Summary(pl):	Program do rozdzielania kompilacji programów w C lub C++
 Name:		distcc
 Group:		Development/Languages
 Version:	2.12.1
-Release:	1
+Release:	2
 License:	GPL
 Source0:	http://distcc.samba.org/ftp/distcc/%{name}-%{version}.tar.bz2
 # Source0-md5:	34c465416f261b980db46a9df6d66c75
@@ -18,6 +18,7 @@ Source4:	%{name}.csh
 Source5:	%{name}.config
 Source6:	%{name}.logrotate
 Patch0:		%{name}-user.patch
+Patch1:		%{name}-waal.patch
 URL:		http://distcc.samba.org/
 BuildRequires:	autoconf >= 2.53
 %{?with_gtk:BuildRequires:	libgnome-devel >= 2.0}
@@ -111,7 +112,8 @@ Monitor gtk dla distcc.
 
 %prep
 %setup -q
-%patch -p1
+%patch0 -p1
+%patch1 -p1
 
 %build
 %{__autoconf}
