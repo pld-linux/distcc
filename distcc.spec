@@ -14,11 +14,7 @@ Source4:	%{name}.csh
 Patch0:		%{name}-user.patch
 Patch1:		%{name}-hostfile.patch
 Patch2:		%{name}-hostopt.patch
-Requires:	gcc
-Requires:	gcc-c++
-Requires:	inetdaemon
 BuildRequires:	popt-devel
-Prereq:         /sbin/chkconfig
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -34,11 +30,12 @@ rezultaty jak lokalna kompilacja, jest prosty w instalacji i u¿yciu
 oraz bardzo czêsto dwa lub wiêcej razy szybszy ni¿ lokalna kompilacja.
 
 %package common
-Summary:	common files for distcc
-Summary(pl):    Pliki  wspó³dzielone distcc 
+Summary:	Common files for inetd and standalone versions of distcc
+Summary(pl):	Pliki wspólne dla wersji inetd i standalone distcc
 Group:          Daemons
+Requires:	gcc
+Requires:	gcc-c++
 Obsoletes:      %{name} < %{name}-2.1-2
-
 
 %description common
 distcc is a program to distribute compilation of C or C++ code across
@@ -83,7 +80,6 @@ distcc configs for running as a standalone daemon.
 Pliki konfiguracyjne distcc do startowania demona w trybie
 standalone.
 
-
 %prep
 %setup -q
 
@@ -107,8 +103,10 @@ install %{SOURCE1} $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd/distccd
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/distcc
 install %{SOURCE3} %{SOURCE4} $RPM_BUILD_ROOT/etc/profile.d
 
+%clean
+rm -rf $RPM_BUILD_ROOT
+
 %post inetd
-[ ! -x /usr/sbin/fix-info-dir ] || /usr/sbin/fix-info-dir -c %{_infodir} >/dev/null 2>&1
 if [ -f /var/lock/subsys/rc-inetd ]; then
         /etc/rc.d/init.d/rc-inetd reload 1>&2
 else
@@ -116,7 +114,6 @@ else
 fi
 
 %postun inetd
-[ ! -x /usr/sbin/fix-info-dir ] || /usr/sbin/fix-info-dir -c %{_infodir} >/dev/null 2>&1
 if [ -f /var/lock/subsys/rc-inetd ]; then
         /etc/rc.d/init.d/rc-inetd reload
 fi
@@ -137,9 +134,6 @@ if [ "$1" = "0" ]; then
         /sbin/chkconfig --del distcc
 fi
 
-%clean
-rm -rf ${RPM_BUILD_ROOT}
-
 %files common
 %defattr(644,root,root,755)
 %doc AUTHORS NEWS README linuxdoc/html/*
@@ -148,7 +142,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %attr(644,root,root) /etc/profile.d/*sh
 
 %files inetd
-%attr(640,root,root) /etc/sysconfig/rc-inetd/distccd
+%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/rc-inetd/distccd
 
 %files standalone
 %attr(755,root,root) /etc/rc.d/init.d/distcc
