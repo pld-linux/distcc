@@ -19,7 +19,6 @@ Source5:	%{name}.config
 Source6:	%{name}.logrotate
 Patch0:		%{name}-user.patch
 Patch1:		%{name}-waal.patch
-Patch2:		%{name}-line3.diff
 URL:		http://distcc.samba.org/
 BuildRequires:	autoconf >= 2.53
 BuildRequires:	automake
@@ -116,7 +115,6 @@ Monitor gtk dla distcc.
 %setup -q
 %patch0 -p1
 #%patch1 -p1
-%patch2 -p1
 
 sed -i -e 's#PKGDATADIR#"%{_pixmapsdir}"#g' src/mon-gnome.c
 
