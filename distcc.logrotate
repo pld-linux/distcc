@@ -1,0 +1,5 @@
+/var/log/distccd {
+       missingok
+       copytruncate
+       notifempty
+}
