@@ -6,11 +6,11 @@ Summary:	Program to distribute compilation of C or C++
 Summary(pl):	Program do rozdzielania kompilacji programów w C lub C++
 Name:		distcc
 Group:		Development/Languages
-Version:	2.12
+Version:	2.12.1
 Release:	1
 License:	GPL
 Source0:	http://distcc.samba.org/ftp/distcc/%{name}-%{version}.tar.bz2
-# Source0-md5:	f258778811c8610453471ea89faeaac6
+# Source0-md5:	34c465416f261b980db46a9df6d66c75
 Source1:	%{name}.inetd
 Source2:	%{name}.init
 Source3:	%{name}.sh
@@ -137,9 +137,9 @@ install %{SOURCE5} $RPM_BUILD_ROOT/etc/sysconfig/distccd
 install %{SOURCE6} $RPM_BUILD_ROOT/etc/logrotate.d/distccd
 
 %if %{with gnome}
-mv $RPM_BUILD_ROOT%{_datadir}/distccmon-gnome.desktop \
+mv $RPM_BUILD_ROOT%{_datadir}/%{name}/distccmon-gnome.desktop \
 	$RPM_BUILD_ROOT%{_applnkdir}/Network/Misc
-mv $RPM_BUILD_ROOT%{_datadir}/distccmon-gnome-icon.png \
+mv $RPM_BUILD_ROOT%{_datadir}/%{name}/distccmon-gnome-icon.png \
 	$RPM_BUILD_ROOT%{_pixmapsdir}
 %endif
 
@@ -202,6 +202,7 @@ fi
 %files monitor
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/distccmon-text
+%{_mandir}/man1/distccmon-text.*
 %if %{with gnome}
 %attr(755,root,root) %{_bindir}/distccmon-gnome
 %{_applnkdir}/Network/Misc/*.desktop
