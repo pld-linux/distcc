@@ -1,9 +1,13 @@
+#
+# Conditional build:
+# _without_gtk	build without gtk2(monitor) support
+#
 Summary:	Program to distribute compilation of C or C++
 Summary(pl):	Program do rozdzielania kompilacji programów w C lub C++
 Name:		distcc
 Group:		Development/Languages
 Version:	2.9
-Release:	1
+Release:	2
 License:	GPL
 URL:		http://distcc.samba.org/
 Source0:	http://distcc.samba.org/ftp/distcc/%{name}-%{version}.tar.bz2
@@ -14,6 +18,7 @@ Source3:	%{name}.sh
 Source4:	%{name}.csh
 Source5:	%{name}.config
 Patch0:		%{name}-user.patch
+%{!?_without_gtk:BuildRequires:	gtk+2-devel >= 2.0}
 BuildRequires:	popt-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -85,7 +90,9 @@ standalone.
 %patch -p1
 
 %build
-%configure
+%configure \
+	%{!?_without_gtk: --enable-gnome}
+
 %{__make}
 
 %install
