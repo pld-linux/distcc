@@ -82,7 +82,6 @@ standalone.
 
 %prep
 %setup -q
-
 %patch -p1
 
 %build
@@ -95,7 +94,8 @@ install -d $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd \
 	   $RPM_BUILD_ROOT/etc/rc.d/init.d \
 	   $RPM_BUILD_ROOT/etc/profile.d
 
-%{__make} DESTDIR=$RPM_BUILD_ROOT install
+%{__make} install \
+	DESTDIR=$RPM_BUILD_ROOT
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd/distccd
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/distcc
