@@ -2,13 +2,12 @@
 #
 # $Id$
 #
-# distccd		distccd 
+# distccd		distccd
 #
 # chkconfig:	345 55 45
 #
-# description:	distccd 
-#	
-
+# description:	distccd
+#
 
 # Source function library
 . /etc/rc.d/init.d/functions
@@ -29,10 +28,8 @@ else
 	exit 0
 fi
 
-OPTION1="--daemon"
-
 [ -z "$DISTCC_HOSTS_ALLOW" -a -n "$HOSTS_ALLOW" ] && DISTCC_HOSTS_ALLOW="$HOSTS_ALLOW"
-			
+
 RETVAL=0
 # See how we were called.
 case "$1" in
@@ -40,9 +37,11 @@ case "$1" in
 	# Check if the service is already running?
 	if [ ! -f /var/lock/subsys/distccd ]; then
 		msg_starting distccd
+		touch distcc /var/log/distcc
+		chown distcc /var/log/distcc
 		daemon /usr/bin/distccd --daemon --user distcc --log-file /var/log/distcc `for ip in $DISTCC_HOSTS_ALLOW; do echo -n "--allow $ip "; done` $DISTCC_OPTS
 		RETVAL=$?
-		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/distccd		
+		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/distccd
 	else
 		msg_already_running distccd
 	fi
@@ -54,7 +53,7 @@ case "$1" in
 		rm -f /var/run/distccd.pid /var/lock/subsys/distccd >/dev/null 2>&1
 	else
 		msg_not_running distccd
-	fi	
+	fi
 	;;
   restart)
 	$0 stop
@@ -83,4 +82,4 @@ esac
 exit $RETVAL
 
 # This must be last line !
-# vi:syntax=sh:tw=78:ts=8:sw=4
+# vi:syntax=sh:tw=78:ts=4:sw=4
