@@ -1,0 +1,54 @@
+Index: src/exitcode.h
+--- src/exitcode.h	2 Feb 2003 12:24:29 -0000	1.13
++++ src/exitcode.h	2 Apr 2003 02:42:27 -0000
+@@ -33,6 +33,7 @@
+  * codes.
+  **/
+ enum dcc_exitcode {
++    EXIT_VERSION_REQUEST          = 001,
+     EXIT_DISTCC_FAILED            = 100, /**< General failure */
+     EXIT_BAD_ARGUMENTS            = 101,
+     EXIT_BIND_FAILED              = 102,
+Index: src/rpc.c
+--- src/rpc.c	27 Mar 2003 04:45:49 -0000	1.25
++++ src/rpc.c	2 Apr 2003 02:42:27 -0000
+@@ -160,6 +160,8 @@
+     }
+     
+     if (memcmp(buf, expected, 4)) {
++        if (memcmp(expected, "DIST", 4) == 0 && memcmp(buf, "QVER", 4) == 0)
++            return EXIT_VERSION_REQUEST;
+         rs_log_error("mismatch on token %s", expected);
+         return EXIT_PROTOCOL_ERROR;
+     }
+Index: src/serve.c
+--- src/serve.c	31 Mar 2003 08:36:37 -0000	1.83
++++ src/serve.c	2 Apr 2003 02:42:27 -0000
+@@ -87,8 +87,11 @@
+ static int dcc_r_request_header(int ifd)
+ {
+     int vers;
++    int ret;
+     
+-    if (dcc_r_token_int(ifd, "DIST", &vers) == -1) {
++    if ((ret = dcc_r_token_int(ifd, "DIST", &vers)) != 0) {
++        if (ret == EXIT_VERSION_REQUEST)
++            return ret;
+         rs_log_error("client did not provide distcc magic fairy dust");
+         return EXIT_PROTOCOL_ERROR;
+     }
+@@ -260,8 +263,13 @@
+ 
+     if ((ret = dcc_r_request_header(netfd))
+         || (ret = dcc_r_argv(netfd, &argv))
+-        || (ret = dcc_scan_args(argv, &orig_input, &orig_output, &argv)))
++        || (ret = dcc_scan_args(argv, &orig_input, &orig_output, &argv))) {
++        if (ret == EXIT_VERSION_REQUEST) {
++            rs_trace("send %s", PACKAGE_VERSION);
++            return dcc_writex(netfd, PACKAGE_VERSION, strlen(PACKAGE_VERSION));
++        }
+         return ret;
++    }
+     
+     /* TODO: Make sure cleanup is called in case of error.
+      *
