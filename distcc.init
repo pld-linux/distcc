@@ -30,6 +30,8 @@ else
 fi
 
 OPTION1="--daemon"
+
+[ -z "$DISTCC_HOSTS_ALLOW" -a -n "$HOSTS_ALLOW" ] && DISTCC_HOSTS_ALLOW="$HOSTS_ALLOW"
 			
 RETVAL=0
 # See how we were called.
@@ -38,7 +40,7 @@ case "$1" in
 	# Check if the service is already running?
 	if [ ! -f /var/lock/subsys/distccd ]; then
 		msg_starting distccd
-		daemon /usr/bin/distccd --daemon --user nobody --log-file /var/log/distcc --allow $HOSTS_ALLOW
+		daemon /usr/bin/distccd --daemon --user nobody --log-file /var/log/distcc --allow $DISTCC_HOSTS_ALLOW $DISTCC_OPTS
 		RETVAL=$?
 		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/distccd		
 	else
