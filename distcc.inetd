@@ -6,5 +6,4 @@ FLAGS=nowait
 USER=nobody
 SERVER=tcpd
 DAEMON=/usr/bin/distccd
-DAEMON_ARGS="--verbose --inetd"
-
+DAEMON_ARGS="--verbose --inetd --user nobody"
