@@ -21,6 +21,7 @@ Patch0:		%{name}-user.patch
 Patch1:		%{name}-waal.patch
 URL:		http://distcc.samba.org/
 BuildRequires:	autoconf >= 2.53
+BuildRequires:	automake
 %{?with_gnome:BuildRequires:	libgnomeui-devel >= 2.0}
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
@@ -115,8 +116,10 @@ Monitor gtk dla distcc.
 %patch0 -p1
 #%patch1 -p1
 
-%build
 sed -i -e 's#PKGDATADIR#"%{_pixmapsdir}"#g' src/mon-gnome.c
+
+%build
+cp -f /usr/share/automake/config.* .
 %{__autoconf}
 %{__autoheader}
 %configure \
@@ -128,8 +131,7 @@ sed -i -e 's#PKGDATADIR#"%{_pixmapsdir}"#g' src/mon-gnome.c
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{sysconfig/rc-inetd,rc.d/init.d,profile.d,logrotate.d} \
-	$RPM_BUILD_ROOT%{_applnkdir}/Network/Misc $RPM_BUILD_ROOT%{_pixmapsdir} \
-	$RPM_BUILD_ROOT%{_var}/log
+	$RPM_BUILD_ROOT{%{_desktopdir},%{_pixmapsdir},%{_var}/log}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -190,7 +192,6 @@ fi
 %files common
 %defattr(644,root,root,755)
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/distccd
-%attr(640,root,root) %ghost %{_var}/log/distcc
 %attr(640,root,root) /etc/logrotate.d/distccd
 %attr(755,root,root) %{_bindir}/%{name}d
 %{_mandir}/man?/%{name}d.*
