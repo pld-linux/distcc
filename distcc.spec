@@ -1,16 +1,16 @@
 #
 # Conditional build:
-# _without_gtk	- build without gtk2(monitor) support
-#
+%bcond_with	gnome	# build without gnome(monitor) support
+
 Summary:	Program to distribute compilation of C or C++
 Summary(pl):	Program do rozdzielania kompilacji programów w C lub C++
 Name:		distcc
 Group:		Development/Languages
-Version:	2.10.1
-Release:	1
+Version:	2.11
+Release:	0.9
 License:	GPL
 Source0:	http://distcc.samba.org/ftp/distcc/%{name}-%{version}.tar.bz2
-# Source0-md5:	7eeccb1a68d52c02bd96864e532e0870
+# Source0-md5:	f3458779c13255d88ee89ea7ccddda29
 Source1:	%{name}.inetd
 Source2:	%{name}.init
 Source3:	%{name}.sh
@@ -18,7 +18,8 @@ Source4:	%{name}.csh
 Source5:	%{name}.config
 Patch0:		%{name}-user.patch
 URL:		http://distcc.samba.org/
-%{!?_without_gtk:BuildRequires:	gtk+2-devel >= 2.0}
+%{?with_gtk:BuildRequires:	libgnome-devel >= 2.0}
+%{?with_gtk:BuildRequires:	pkg-config}
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -113,14 +114,17 @@ Monitor gtk dla distcc.
 %patch -p1
 
 %build
+%{__autoconf}
+%{__autoheader}
 %configure \
-	%{!?_without_gtk:--enable-gnome}
+	%{?with_gtk:--enable-gnome}
 
 %{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/etc/{sysconfig/rc-inetd,rc.d/init.d,profile.d}
+install -d $RPM_BUILD_ROOT/etc/{sysconfig/rc-inetd,rc.d/init.d,profile.d} \
+	$RPM_BUILD_ROOT%{_applnkdir}/Network/Misc $RPM_BUILD_ROOT%{_pixmapsdir}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -129,6 +133,14 @@ install %{SOURCE1} $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd/distccd
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/distcc
 install %{SOURCE3} %{SOURCE4} $RPM_BUILD_ROOT/etc/profile.d
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/sysconfig/distccd
+
+%if 0%{with gnome}
+mv $RPM_BUILD_ROOT%{_datadir}/distccmon-gnome.desktop \
+	$RPM_BUILD_ROOT%{_applnkdir}/Network/Misc
+mv $RPM_BUILD_ROOT%{_datadir}/distccmon-gnome-icon.png \
+	$RPM_BUILD_ROOT%{_pixmapsdir}
+%endif
+
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -183,5 +195,8 @@ fi
 %files monitor
 %attr(755,root,root) %{_bindir}/distccmon-text
 
-%{!?_without_gtk:%files monitor-gnome}
-%{!?_without_gtk:%attr(755,root,root) %{_bindir}/distccmon-gnome}
+%if 0%{with gnome}
+%attr(755,root,root) %{_bindir}/distccmon-gnome
+%{_applnkdir}/Network/Misc/*.desktop
+$RPM_BUILD_ROOT%{_pixmapsdir}/*
+%endif
