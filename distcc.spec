@@ -193,6 +193,7 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/distcc
 
 %files monitor
+%defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/distccmon-text
 
 %if 0%{with gnome}
