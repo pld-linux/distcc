@@ -139,7 +139,7 @@ fi
 %files common
 %defattr(644,root,root,755)
 %doc AUTHORS NEWS README linuxdoc/html/*
-%attr(640,root,root) %config(noreplace) %verify(not size mtime md5 /etc/sysconfig/distcc
+%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/distcc
 %attr(755,root,root) %{_bindir}/*
 %attr(644,root,root) %{_mandir}/man?/*
 %attr(644,root,root) /etc/profile.d/*sh
