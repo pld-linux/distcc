@@ -11,7 +11,6 @@ Release:	1
 License:	GPL
 Source0:	http://distcc.samba.org/ftp/distcc/%{name}-%{version}.tar.bz2
 # Source0-md5:	0d6b80a1efc3a3d816c4f4175f63eaa2
-# Source0-size:	339939
 Source1:	%{name}.inetd
 Source2:	%{name}.init
 Source3:	%{name}.sh
@@ -25,6 +24,7 @@ BuildRequires:	automake
 %{?with_gnome:BuildRequires:	libgnomeui-devel >= 2.0}
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
+BuildRequires:	sed >= 4.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
