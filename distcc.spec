@@ -2,8 +2,8 @@ Summary:	Program to distribute compilation of C or C++
 Summary(pl):	Program do rozdzielania kompilacji programów w C lub C++
 Name:		distcc
 Group:		Development/Languages
-Version:	2.2
-Release:	2
+Version:	2.3
+Release:	1
 License:	GPL
 URL:		http://distcc.samba.org
 Source0:	http://distcc.samba.org/ftp/distcc/%{name}-%{version}.tar.bz2
@@ -13,8 +13,7 @@ Source3:	%{name}.sh
 Source4:	%{name}.csh
 Source5:	%{name}.config
 Patch0:		%{name}-user.patch
-Patch1:		%{name}-hostfile.patch
-Patch2:		%{name}-hostopt.patch
+Patch1:		%{name}-hostopt.patch
 BuildRequires:	popt-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -85,8 +84,7 @@ standalone.
 %setup -q
 
 %patch -p1
-%patch1 -p1
-%patch2 -p0
+%patch1 -p0
 
 %build
 %configure
