@@ -1,7 +1,7 @@
 SERVICE_NAME=distcc
 SOCK_TYPE=stream
 PROTOCOL=tcp
-PORT=4200
+PORT=3632
 FLAGS=nowait
 USER=nobody
 SERVER=tcpd
