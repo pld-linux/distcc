@@ -190,7 +190,7 @@ fi
 %files common
 %defattr(644,root,root,755)
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/distccd
-%attr(640,root,root) /etc/logrotate.d/distccd
+%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/logrotate.d/distccd
 %attr(755,root,root) %{_bindir}/%{name}d
 %{_mandir}/man?/%{name}d.*
 %attr(640,nobody,root) %ghost %{_var}/log/distcc
