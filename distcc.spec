@@ -19,7 +19,7 @@ Source5:	%{name}.config
 Source6:	%{name}.logrotate
 Patch0:		%{name}-user.patch
 URL:		http://distcc.samba.org/
-BuildRequires:	autoconf
+BuildRequires:	autoconf >= 2.53
 %{?with_gtk:BuildRequires:	libgnome-devel >= 2.0}
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
