@@ -199,5 +199,5 @@ fi
 %if 0%{with gnome}
 %attr(755,root,root) %{_bindir}/distccmon-gnome
 %{_applnkdir}/Network/Misc/*.desktop
-$RPM_BUILD_ROOT%{_pixmapsdir}/*
+%{_pixmapsdir}/*
 %endif
