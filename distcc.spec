@@ -22,6 +22,7 @@ Patch1:		%{name}-waal.patch
 URL:		http://distcc.samba.org/
 BuildRequires:	autoconf >= 2.53
 %{?with_gnome:BuildRequires:	libgnome-devel >= 2.0}
+%{?with_gnome:BuildRequires:	libgnomeui-devel}
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
