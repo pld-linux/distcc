@@ -1,6 +1,6 @@
 #
 # Conditional build:
-%bcond_with	gnome	# build without gnome(monitor) support
+%bcond_with	gnome	# build with gnome(monitor) support
 #
 Summary:	Program to distribute compilation of C or C++
 Summary(pl):	Program do rozdzielania kompilacji programów w C lub C++
@@ -21,7 +21,7 @@ Patch0:		%{name}-user.patch
 Patch1:		%{name}-waal.patch
 URL:		http://distcc.samba.org/
 BuildRequires:	autoconf >= 2.53
-%{?with_gtk:BuildRequires:	libgnome-devel >= 2.0}
+%{?with_gnome:BuildRequires:	libgnome-devel >= 2.0}
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
