@@ -69,7 +69,7 @@ case "$1" in
 		killproc distccd -HUP
 		RETVAL=$?
 	else
-		msg_not_running distccd
+		msg_not_running distccd >&2
 		exit 7
 	fi
 	;;
