@@ -7,6 +7,7 @@ Release:	1
 License:	GPL
 URL:		http://distcc.samba.org
 Source0:	http://distcc.samba.org/ftp/distcc/%{name}-%{version}.tar.bz2
+# Source0-md5:	e996c2dd500c3d693f507c88b3c565bb
 Source1:	%{name}.inetd
 Source2:	%{name}.init
 Source3:	%{name}.sh
