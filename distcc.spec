@@ -3,11 +3,13 @@ Summary(pl):	Program do rozdzielania kompilacji programów w C lub C++
 Name:		distcc
 Group:		Development/Languages
 Version:	1.2.3
-Release:	1
+Release:	2
 License:	GPL
 URL:		http://distcc.samba.org
 Source0:	http://distcc.samba.org/ftp/distcc/%{name}-%{version}.tar.bz2
 Source1:	%{name}.inetd
+Source2:	%{name}.sh
+Source3:	%{name}.csh
 Patch0:		%{name}-user.patch
 Requires:	gcc
 Requires:	gcc-c++
@@ -39,10 +41,12 @@ oraz bardzo czêsto dwa lub wiêcej razy szybszy ni¿ lokalna kompilacja.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd
+install -d $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd \
+	   $RPM_BUILD_ROOT/etc/profile.d
 
 %{makeinstall}
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd/distccd
+install %{SOURCE2} %{SOURCE3} $RPM_BUILD_ROOT/etc/profile.d
 
 %post
 [ ! -x /usr/sbin/fix-info-dir ] || /usr/sbin/fix-info-dir -c %{_infodir} >/dev/null 2>&1
@@ -67,4 +71,5 @@ rm -rf ${RPM_BUILD_ROOT}
 %attr(755,root,root) %{_bindir}/*
 %attr(644,root,root) %{_mandir}/man?/*
 %attr(640,root,root) /etc/sysconfig/rc-inetd/distccd
+%attr(644,root,root) /etc/profile.d/*sh
 %{_infodir}/distcc*
