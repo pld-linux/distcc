@@ -1,0 +1,11 @@
+--- distcc-2.12.1/src/arg.c.orig	2004-02-08 08:55:41.000000000 +0100
++++ distcc-2.12.1/src/arg.c	2004-02-08 08:56:17.000000000 +0100
+@@ -178,7 +178,7 @@
+                  * all the options would be complex since you can give several
+                  * comma-separated assembler options after -Wa, but looking
+                  * for '=' should be safe. */
+-                if (strchr(a, '=')) {
++                if (strchr(a, '-al=')) {
+                     rs_trace("%s needs to write out assembly listings and must be local",
+                          a);
+                     return EXIT_DISTCC_FAILED;
