@@ -7,7 +7,7 @@ Summary(pl):	Program do rozdzielania kompilacji programów w C lub C++
 Name:		distcc
 Group:		Development/Languages
 Version:	2.18
-Release:	0.2
+Release:	0.3
 License:	GPL
 Source0:	http://distcc.samba.org/ftp/distcc/%{name}-%{version}.tar.bz2
 # Source0-md5:	a55b547d4ff62d8500e290b82671db50
@@ -157,6 +157,14 @@ touch $RPM_BUILD_ROOT%{_var}/log/distcc
 rm -rf $RPM_BUILD_ROOT
 
 %pre inetd
+if [ -n "`getgid distcc`" ]; then
+        if [ "`getgid distcc`" != "137" ]; then
+                echo "Error: group distcc doesn't have gid=137. Correct this before installing distccd." 1>&2
+                exit 1
+        fi
+else
+        /usr/sbin/groupadd -g 137 -r -f distcc
+fi
 if [ -n "`/bin/id -u distcc 2>/dev/null`" ]; then
 	if [ "`/bin/id -u distcc`" != "137" ]; then
 		echo "Error: user distcc doesn't have uid=137. Correct this before installing distccd server." 1>&2
@@ -179,9 +187,18 @@ if [ -f /var/lock/subsys/rc-inetd ]; then
 fi
 if [ "$1" = "0" ]; then
         %userremove distcc
+	%groupremove distcc
 fi
 
 %pre standalone
+if [ -n "`getgid distcc`" ]; then
+        if [ "`getgid distcc`" != "137" ]; then
+                echo "Error: group distcc doesn't have gid=137. Correct this before installing distccd." 1>&2
+                exit 1
+        fi
+else
+        /usr/sbin/groupadd -g 137 -r -f distcc
+fi
 if [ -n "`/bin/id -u distcc 2>/dev/null`" ]; then
 	if [ "`/bin/id -u distcc`" != "137" ]; then
 		echo "Error: user distcc doesn't have uid=137. Correct this before installing distccd server." 1>&2
@@ -202,6 +219,7 @@ fi
 %postun standalone
 if [ "$1" = "0" ]; then
 	%userremove distcc
+	%groupremove distcc
 fi
 
 %preun standalone
