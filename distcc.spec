@@ -87,7 +87,7 @@ Pliki konfiguracyjne distcc do startowania demona w trybie
 standalone.
 
 %package monitor
-Summary:        monitor for distcc
+Summary:        Monitor for distcc
 Summary(pl):    Monitor dla distcc
 Group:          Applications
 
