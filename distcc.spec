@@ -11,6 +11,7 @@ Release:	0.1
 License:	GPL
 Source0:	http://distcc.samba.org/ftp/distcc/%{name}-%{version}.tar.bz2
 # Source0-md5:	a55b547d4ff62d8500e290b82671db50
+# Source0-size:	339939
 Source1:	%{name}.inetd
 Source2:	%{name}.init
 Source3:	%{name}.sh
