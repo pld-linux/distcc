@@ -6,11 +6,11 @@ Summary:	Program to distribute compilation of C or C++
 Summary(pl):	Program do rozdzielania kompilacji programów w C lub C++
 Name:		distcc
 Group:		Development/Languages
-Version:	2.12.1
-Release:	3
+Version:	2.13
+Release:	0.1
 License:	GPL
 Source0:	http://distcc.samba.org/ftp/distcc/%{name}-%{version}.tar.bz2
-# Source0-md5:	34c465416f261b980db46a9df6d66c75
+# Source0-md5:	98cfd19a0329c9c3fdaee14098b2a9a5
 Source1:	%{name}.inetd
 Source2:	%{name}.init
 Source3:	%{name}.sh
@@ -113,7 +113,7 @@ Monitor gtk dla distcc.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
+#%patch1 -p1
 
 %build
 %{__autoconf}
