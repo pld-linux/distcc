@@ -1,6 +1,6 @@
 #
 # Conditional build:
-# _without_gtk	build without gtk2(monitor) support
+# _without_gtk	- build without gtk2(monitor) support
 #
 Summary:	Program to distribute compilation of C or C++
 Summary(pl):	Program do rozdzielania kompilacji programów w C lub C++
@@ -9,7 +9,6 @@ Group:		Development/Languages
 Version:	2.10.1
 Release:	1
 License:	GPL
-URL:		http://distcc.samba.org/
 Source0:	http://distcc.samba.org/ftp/distcc/%{name}-%{version}.tar.bz2
 # Source0-md5:	7eeccb1a68d52c02bd96864e532e0870
 Source1:	%{name}.inetd
@@ -18,9 +17,10 @@ Source3:	%{name}.sh
 Source4:	%{name}.csh
 Source5:	%{name}.config
 Patch0:		%{name}-user.patch
+URL:		http://distcc.samba.org/
 %{!?_without_gtk:BuildRequires:	gtk+2-devel >= 2.0}
-BuildRequires:	popt-devel
 BuildRequires:	pkgconfig
+BuildRequires:	popt-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -120,9 +120,7 @@ Monitor gtk dla distcc.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd \
-	   $RPM_BUILD_ROOT/etc/rc.d/init.d \
-	   $RPM_BUILD_ROOT/etc/profile.d
+install -d $RPM_BUILD_ROOT/etc/{sysconfig/rc-inetd,rc.d/init.d,profile.d}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
