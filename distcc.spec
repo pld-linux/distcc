@@ -114,30 +114,30 @@ rm -rf $RPM_BUILD_ROOT
 
 %post inetd
 if [ -f /var/lock/subsys/rc-inetd ]; then
-        /etc/rc.d/init.d/rc-inetd reload 1>&2
+	/etc/rc.d/init.d/rc-inetd reload 1>&2
 else
-        echo "Type \"/etc/rc.d/init.d/rc-inetd start\" to start inet server" 1>&2
+	echo "Type \"/etc/rc.d/init.d/rc-inetd start\" to start inet server" 1>&2
 fi
 
 %postun inetd
 if [ -f /var/lock/subsys/rc-inetd ]; then
-        /etc/rc.d/init.d/rc-inetd reload
+	/etc/rc.d/init.d/rc-inetd reload
 fi
 
 %post standalone
 /sbin/chkconfig --add distcc
 if [ -f /var/lock/subsys/distccd ]; then
-        /etc/rc.d/init.d/distcc restart 1>&2
+	/etc/rc.d/init.d/distcc restart 1>&2
 else
-        echo "Run \"/etc/rc.d/init.d/distcc start\" to start distcc daemon."
+	echo "Run \"/etc/rc.d/init.d/distcc start\" to start distcc daemon."
 fi
 
 %preun standalone
 if [ "$1" = "0" ]; then
-        if [ -f /var/lock/subsys/distccd ]; then
-                /etc/rc.d/init.d/distcc stop 1>&2
-        fi
-        /sbin/chkconfig --del distcc
+	if [ -f /var/lock/subsys/distccd ]; then
+		/etc/rc.d/init.d/distcc stop 1>&2
+	fi
+	/sbin/chkconfig --del distcc
 fi
 
 %files common
