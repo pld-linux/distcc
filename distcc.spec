@@ -5,7 +5,7 @@ Group:		Development/Languages
 Version:	2.8
 Release:	1
 License:	GPL
-URL:		http://distcc.samba.org
+URL:		http://distcc.samba.org/
 Source0:	http://distcc.samba.org/ftp/distcc/%{name}-%{version}.tar.bz2
 # Source0-md5:	da86497ab23f34a8630a2758d3c1b8cc
 Source1:	%{name}.inetd
