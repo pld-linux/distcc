@@ -45,6 +45,8 @@ Summary(pl):	Pliki wspólne dla wersji inetd i standalone distcc
 Group:		Daemons
 Requires:	gcc
 Requires:	gcc-c++
+Requires(pre): 	/usr/sbin/useradd
+Requires(postun):	/usr/sbin/userdel
 Obsoletes:	distcc < 2.1-2
 
 %description common
@@ -65,8 +67,6 @@ Summary(pl):	Pliki konfiguracyjne do u¿ycia distcc poprzez inetd
 Group:		Daemons
 PreReq:		%{name}-common = %{version}-%{release}
 PreReq:		rc-inetd
-Requires(pre):	/usr/sbin/useradd
-Requires(postun):	/usr/sbin/userdel
 Obsoletes:	distcc < 2.1-2
 
 %description inetd
@@ -81,8 +81,6 @@ Summary(pl):	Pliki konfiguracyjne do startowania distcc w trybie standalone
 Group:		Daemons
 PreReq:		%{name}-common = %{version}-%{release}
 PreReq:		rc-scripts
-Requires(pre):	/usr/sbin/useradd
-Requires(postun):	/usr/sbin/userdel
 Obsoletes:	distcc < 2.1-2
 
 %description standalone
@@ -156,7 +154,7 @@ touch $RPM_BUILD_ROOT%{_var}/log/distcc
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%pre inetd
+%pre common
 if [ -n "`getgid distcc`" ]; then
         if [ "`getgid distcc`" != "137" ]; then
                 echo "Error: group distcc doesn't have gid=137. Correct this before installing distccd." 1>&2
@@ -174,6 +172,12 @@ else
 	/usr/sbin/useradd -u 137 -d /tmp -s /bin/false -c "distcc user" -g distcc distcc 1>&2
 fi
 
+%postun common
+if [ "$1" = "0" ]; then
+        %userremove distcc
+        %groupremove distcc
+fi
+
 %post inetd
 if [ -f /var/lock/subsys/rc-inetd ]; then
 	/etc/rc.d/init.d/rc-inetd reload 1>&2
@@ -185,28 +189,6 @@ fi
 if [ -f /var/lock/subsys/rc-inetd ]; then
 	/etc/rc.d/init.d/rc-inetd reload
 fi
-if [ "$1" = "0" ]; then
-        %userremove distcc
-	%groupremove distcc
-fi
-
-%pre standalone
-if [ -n "`getgid distcc`" ]; then
-        if [ "`getgid distcc`" != "137" ]; then
-                echo "Error: group distcc doesn't have gid=137. Correct this before installing distccd." 1>&2
-                exit 1
-        fi
-else
-        /usr/sbin/groupadd -g 137 -r -f distcc
-fi
-if [ -n "`/bin/id -u distcc 2>/dev/null`" ]; then
-	if [ "`/bin/id -u distcc`" != "137" ]; then
-		echo "Error: user distcc doesn't have uid=137. Correct this before installing distccd server." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/useradd -u 137 -d /tmp -s /bin/false -c "distccd user" -g distcc distcc 1>&2
-fi
 
 %post standalone
 /sbin/chkconfig --add distcc
@@ -214,12 +196,6 @@ if [ -f /var/lock/subsys/distccd ]; then
 	/etc/rc.d/init.d/distcc restart 1>&2
 else
 	echo "Run \"/etc/rc.d/init.d/distcc start\" to start distcc daemon."
-fi
-
-%postun standalone
-if [ "$1" = "0" ]; then
-	%userremove distcc
-	%groupremove distcc
 fi
 
 %preun standalone
