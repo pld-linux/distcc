@@ -87,6 +87,7 @@ Summary(pl):	Pliki konfiguracyjne do startowania distcc w trybie standalone
 Group:		Daemons
 PreReq:		%{name}-common = %{version}-%{release}
 PreReq:		rc-scripts
+Requires(post,preun):	/sbin/chkconfig
 Obsoletes:	distcc < 2.1-2
 
 %description standalone
