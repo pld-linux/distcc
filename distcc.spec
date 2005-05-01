@@ -24,6 +24,7 @@ BuildRequires:	automake
 %{?with_gnome:BuildRequires:	libgnomeui-devel >= 2.0}
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
+BuildRequires:	rpmbuild(macros) >= 1.202
 BuildRequires:	sed >= 4.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -162,23 +163,8 @@ touch $RPM_BUILD_ROOT%{_var}/log/distcc
 rm -rf $RPM_BUILD_ROOT
 
 %pre common
-if [ -n "`/usr/bin/getgid distcc`" ]; then
-	if [ "`/usr/bin/getgid distcc`" != "137" ]; then
-		echo "Error: group distcc doesn't have gid=137. Correct this before installing distccd." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/groupadd -g 137 distcc 1>&2
-fi
-if [ -n "`/bin/id -u distcc 2>/dev/null`" ]; then
-	if [ "`/bin/id -u distcc`" != "137" ]; then
-		echo "Error: user distcc doesn't have uid=137. Correct this before installing distccd server." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/useradd -u 137 -d /tmp -s /bin/false -c "distcc user" \
-		-g distcc distcc 1>&2
-fi
+%groupadd -P %{name}-common -g 137 distcc
+%useradd -P %{name}-common -u 137 -d /tmp -s /bin/false -c "distcc user" -g distcc distcc
 
 %postun common
 if [ "$1" = "0" ]; then
