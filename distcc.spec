@@ -49,7 +49,7 @@ Requires:	gcc-c++
 Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
-Requires(pre): 	/usr/sbin/useradd
+Requires(pre):	/usr/sbin/useradd
 Requires(postun):	/usr/sbin/groupdel
 Requires(postun):	/usr/sbin/userdel
 Provides:	group(distcc)
@@ -95,8 +95,7 @@ Obsoletes:	distcc < 2.1-2
 distcc configs for running as a standalone daemon.
 
 %description standalone -l pl
-Pliki konfiguracyjne distcc do startowania demona w trybie
-standalone.
+Pliki konfiguracyjne distcc do startowania demona w trybie standalone.
 
 %package monitor
 Summary:	Monitor for distcc
@@ -132,7 +131,7 @@ cp -f /usr/share/automake/config.* .
 %{__autoheader}
 %configure \
 	--enable-rfc2553 \
-	%{?with_gnome:--with-gnome} 
+	%{?with_gnome:--with-gnome}
 
 %{__make}
 
@@ -209,15 +208,15 @@ fi
 
 %files common
 %defattr(644,root,root,755)
-%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/distccd
-%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/logrotate.d/distccd
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/distccd
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/distccd
 %attr(755,root,root) %{_bindir}/%{name}d
 %{_mandir}/man?/%{name}d.*
 %attr(640,distcc,root) %ghost %{_var}/log/distcc
 
 %files inetd
 %defattr(644,root,root,755)
-%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/rc-inetd/distccd
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/rc-inetd/distccd
 
 %files standalone
 %defattr(644,root,root,755)
