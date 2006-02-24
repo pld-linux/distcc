@@ -5,10 +5,10 @@
 Summary:	Program to distribute compilation of C or C++
 Summary(pl):	Program do rozdzielania kompilacji programów w C lub C++
 Name:		distcc
-Group:		Development/Languages
 Version:	2.18.3
 Release:	1
 License:	GPL
+Group:		Development/Languages
 Source0:	http://distcc.samba.org/ftp/distcc/%{name}-%{version}.tar.bz2
 # Source0-md5:	0d6b80a1efc3a3d816c4f4175f63eaa2
 Source1:	%{name}.inetd
@@ -24,7 +24,7 @@ BuildRequires:	automake
 %{?with_gnome:BuildRequires:	libgnomeui-devel >= 2.0}
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
-BuildRequires:	rpmbuild(macros) >= 1.202
+BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	sed >= 4.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -44,14 +44,14 @@ oraz bardzo czêsto dwa lub wiêcej razy szybszy ni¿ lokalna kompilacja.
 Summary:	Common files for inetd and standalone versions of distcc
 Summary(pl):	Pliki wspólne dla wersji inetd i standalone distcc
 Group:		Daemons
-Requires:	gcc
-Requires:	gcc-c++
+Requires(postun):	/usr/sbin/groupdel
+Requires(postun):	/usr/sbin/userdel
 Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
-Requires(postun):	/usr/sbin/groupdel
-Requires(postun):	/usr/sbin/userdel
+Requires:	gcc
+Requires:	gcc-c++
 Provides:	group(distcc)
 Provides:	user(distcc)
 Obsoletes:	distcc < 2.1-2
@@ -72,8 +72,8 @@ oraz bardzo czêsto dwa lub wiêcej razy szybszy ni¿ lokalna kompilacja.
 Summary:	inetd configs for distcc
 Summary(pl):	Pliki konfiguracyjne do u¿ycia distcc poprzez inetd
 Group:		Daemons
-PreReq:		%{name}-common = %{version}-%{release}
-PreReq:		rc-inetd
+Requires:	%{name}-common = %{version}-%{release}
+Requires:	rc-inetd
 Obsoletes:	distcc < 2.1-2
 
 %description inetd
@@ -86,9 +86,9 @@ Pliki konfiguracyjna distcc do startowania demona poprzez inetd.
 Summary:	Standalone daemon configs for distcc
 Summary(pl):	Pliki konfiguracyjne do startowania distcc w trybie standalone
 Group:		Daemons
-PreReq:		%{name}-common = %{version}-%{release}
-PreReq:		rc-scripts
 Requires(post,preun):	/sbin/chkconfig
+Requires:	%{name}-common = %{version}-%{release}
+Requires:	rc-scripts
 Obsoletes:	distcc < 2.1-2
 
 %description standalone
@@ -172,30 +172,18 @@ if [ "$1" = "0" ]; then
 fi
 
 %post inetd
-if [ -f /var/lock/subsys/rc-inetd ]; then
-	/etc/rc.d/init.d/rc-inetd reload 1>&2
-else
-	echo "Type \"/etc/rc.d/init.d/rc-inetd start\" to start inet server" 1>&2
-fi
+%service -q rc-inetd reload
 
 %postun inetd
-if [ -f /var/lock/subsys/rc-inetd ]; then
-	/etc/rc.d/init.d/rc-inetd reload
-fi
+%service -q rc-inetd reload
 
 %post standalone
 /sbin/chkconfig --add distcc
-if [ -f /var/lock/subsys/distccd ]; then
-	/etc/rc.d/init.d/distcc restart 1>&2
-else
-	echo "Run \"/etc/rc.d/init.d/distcc start\" to start distcc daemon."
-fi
+%service distcc restart "distcc daemon"
 
 %preun standalone
 if [ "$1" = "0" ]; then
-	if [ -f /var/lock/subsys/distccd ]; then
-		/etc/rc.d/init.d/distcc stop 1>&2
-	fi
+	%service distcc stop
 	/sbin/chkconfig --del distcc
 fi
 
