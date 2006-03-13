@@ -175,7 +175,9 @@ fi
 %service -q rc-inetd reload
 
 %postun inetd
-%service -q rc-inetd reload
+if [ "$1" = 0 ]; then
+	%service -q rc-inetd reload
+fi
 
 %post standalone
 /sbin/chkconfig --add distcc
