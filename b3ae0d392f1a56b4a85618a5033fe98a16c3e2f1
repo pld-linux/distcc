@@ -1,0 +1,10 @@
+- updated to 2.4
+  Changes:
+  BUG FIXES:
+    * If an IO error occurs while trying to get a lock, bail out rather
+      than getting stuck.
+    * Don't use the RFC2553 getaddrinfo/getnameinfo API by default,
+      because it seems to be slower on OS X and possibly problematic
+      on other systems.  It can be enabled with --enable-rfc2553 if
+      you want to use IPv6, multi-homed servers, or want to test the
+      new API.
