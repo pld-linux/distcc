@@ -3,7 +3,7 @@
 %bcond_without	gnome	# build without gnome(monitor) support
 #
 Summary:	Program to distribute compilation of C or C++
-Summary(pl):	Program do rozdzielania kompilacji programów w C lub C++
+Summary(pl.UTF-8):   Program do rozdzielania kompilacji programÃ³w w C lub C++
 Name:		distcc
 Version:	2.18.3
 Release:	3
@@ -34,15 +34,15 @@ several machines on a network. distcc should always generate the same
 results as a local compile, is simple to install and use, and is often
 two or more times faster than a local compile.
 
-%description -l pl
-distcc jest programem pozwalaj±cym na dystrybucjê kompilacji C lub C++
-na kilka maszyn w sieci. distcc powinien zawsze generowaæ takie same
-rezultaty jak lokalna kompilacja, jest prosty w instalacji i u¿yciu
-oraz bardzo czêsto dwa lub wiêcej razy szybszy ni¿ lokalna kompilacja.
+%description -l pl.UTF-8
+distcc jest programem pozwalajÄ…cym na dystrybucjÄ™ kompilacji C lub C++
+na kilka maszyn w sieci. distcc powinien zawsze generowaÄ‡ takie same
+rezultaty jak lokalna kompilacja, jest prosty w instalacji i uÅ¼yciu
+oraz bardzo czÄ™sto dwa lub wiÄ™cej razy szybszy niÅ¼ lokalna kompilacja.
 
 %package common
 Summary:	Common files for inetd and standalone versions of distcc
-Summary(pl):	Pliki wspólne dla wersji inetd i standalone distcc
+Summary(pl.UTF-8):   Pliki wspÃ³lne dla wersji inetd i standalone distcc
 Group:		Daemons
 Requires(postun):	/usr/sbin/groupdel
 Requires(postun):	/usr/sbin/userdel
@@ -62,15 +62,15 @@ several machines on a network. distcc should always generate the same
 results as a local compile, is simple to install and use, and is often
 two or more times faster than a local compile.
 
-%description common -l pl
-distcc jest programem pozwalaj±cym na dystrybucjê kompilacji C lub C++
-na kilka maszyn w sieci. distcc powinien zawsze generowaæ takie same
-rezultaty jak lokalna kompilacja, jest prosty w instalacji i u¿yciu
-oraz bardzo czêsto dwa lub wiêcej razy szybszy ni¿ lokalna kompilacja.
+%description common -l pl.UTF-8
+distcc jest programem pozwalajÄ…cym na dystrybucjÄ™ kompilacji C lub C++
+na kilka maszyn w sieci. distcc powinien zawsze generowaÄ‡ takie same
+rezultaty jak lokalna kompilacja, jest prosty w instalacji i uÅ¼yciu
+oraz bardzo czÄ™sto dwa lub wiÄ™cej razy szybszy niÅ¼ lokalna kompilacja.
 
 %package inetd
 Summary:	inetd configs for distcc
-Summary(pl):	Pliki konfiguracyjne do u¿ycia distcc poprzez inetd
+Summary(pl.UTF-8):   Pliki konfiguracyjne do uÅ¼ycia distcc poprzez inetd
 Group:		Daemons
 Requires:	%{name}-common = %{version}-%{release}
 Requires:	rc-inetd
@@ -79,12 +79,12 @@ Obsoletes:	distcc < 2.1-2
 %description inetd
 distcc configs for running from inetd.
 
-%description inetd -l pl
+%description inetd -l pl.UTF-8
 Pliki konfiguracyjna distcc do startowania demona poprzez inetd.
 
 %package standalone
 Summary:	Standalone daemon configs for distcc
-Summary(pl):	Pliki konfiguracyjne do startowania distcc w trybie standalone
+Summary(pl.UTF-8):   Pliki konfiguracyjne do startowania distcc w trybie standalone
 Group:		Daemons
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{version}-%{release}
@@ -94,29 +94,29 @@ Obsoletes:	distcc < 2.1-2
 %description standalone
 distcc configs for running as a standalone daemon.
 
-%description standalone -l pl
+%description standalone -l pl.UTF-8
 Pliki konfiguracyjne distcc do startowania demona w trybie standalone.
 
 %package monitor
 Summary:	Monitor for distcc
-Summary(pl):	Monitor dla distcc
+Summary(pl.UTF-8):   Monitor dla distcc
 Group:		Applications
 
 %description monitor
 Monitor for distcc.
 
-%description monitor -l pl
+%description monitor -l pl.UTF-8
 Monitor dla distcc.
 
 %package monitor-gnome
 Summary:	GTK+ monitor for distcc
-Summary(pl):	Monitor GTK+ dla distcc
+Summary(pl.UTF-8):   Monitor GTK+ dla distcc
 Group:		X11/Applications
 
 %description monitor-gnome
 GTK+ monitor for distcc.
 
-%description monitor-gnome -l pl
+%description monitor-gnome -l pl.UTF-8
 Monitor GTK+ dla distcc.
 
 %prep
