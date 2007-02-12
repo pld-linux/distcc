@@ -3,7 +3,7 @@
 %bcond_without	gnome	# build without gnome(monitor) support
 #
 Summary:	Program to distribute compilation of C or C++
-Summary(pl.UTF-8):   Program do rozdzielania kompilacji programów w C lub C++
+Summary(pl.UTF-8):	Program do rozdzielania kompilacji programów w C lub C++
 Name:		distcc
 Version:	2.18.3
 Release:	3
@@ -42,7 +42,7 @@ oraz bardzo często dwa lub więcej razy szybszy niż lokalna kompilacja.
 
 %package common
 Summary:	Common files for inetd and standalone versions of distcc
-Summary(pl.UTF-8):   Pliki wspólne dla wersji inetd i standalone distcc
+Summary(pl.UTF-8):	Pliki wspólne dla wersji inetd i standalone distcc
 Group:		Daemons
 Requires(postun):	/usr/sbin/groupdel
 Requires(postun):	/usr/sbin/userdel
@@ -70,7 +70,7 @@ oraz bardzo często dwa lub więcej razy szybszy niż lokalna kompilacja.
 
 %package inetd
 Summary:	inetd configs for distcc
-Summary(pl.UTF-8):   Pliki konfiguracyjne do użycia distcc poprzez inetd
+Summary(pl.UTF-8):	Pliki konfiguracyjne do użycia distcc poprzez inetd
 Group:		Daemons
 Requires:	%{name}-common = %{version}-%{release}
 Requires:	rc-inetd
@@ -84,7 +84,7 @@ Pliki konfiguracyjna distcc do startowania demona poprzez inetd.
 
 %package standalone
 Summary:	Standalone daemon configs for distcc
-Summary(pl.UTF-8):   Pliki konfiguracyjne do startowania distcc w trybie standalone
+Summary(pl.UTF-8):	Pliki konfiguracyjne do startowania distcc w trybie standalone
 Group:		Daemons
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{version}-%{release}
@@ -99,7 +99,7 @@ Pliki konfiguracyjne distcc do startowania demona w trybie standalone.
 
 %package monitor
 Summary:	Monitor for distcc
-Summary(pl.UTF-8):   Monitor dla distcc
+Summary(pl.UTF-8):	Monitor dla distcc
 Group:		Applications
 
 %description monitor
@@ -110,7 +110,7 @@ Monitor dla distcc.
 
 %package monitor-gnome
 Summary:	GTK+ monitor for distcc
-Summary(pl.UTF-8):   Monitor GTK+ dla distcc
+Summary(pl.UTF-8):	Monitor GTK+ dla distcc
 Group:		X11/Applications
 
 %description monitor-gnome
