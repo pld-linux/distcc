@@ -1,0 +1,17 @@
+diff -Nur distcc-2.18.3.orig/Makefile.in distcc-2.18.3.as-needed/Makefile.in
+--- distcc-2.18.3.orig/Makefile.in	2004-10-24 05:05:48.000000000 +0000
++++ distcc-2.18.3.as-needed/Makefile.in	2007-06-04 17:45:58.000000000 +0000
+@@ -377,9 +377,10 @@
+ 		$(srcdir)/src/renderer.c
+ 
+ distccmon-gnome@EXEEXT@: $(mon_obj) $(gnome_obj)
+-	$(CC) -o $@ $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) $(LIBS)	\
+-		$(GNOME_CFLAGS) $(GNOME_LIBS)			\
+-		$(mon_obj) $(gnome_obj)
++	$(CC) -o $@ $(CPPFLAGS) $(CFLAGS) $(LDFLAGS)		\
++		$(GNOME_CFLAGS)					\
++		$(mon_obj) $(gnome_obj)				\
++		$(LIBS) $(GNOME_LIBS)
+ 
+ 
+ ## Dist targets
