@@ -18,6 +18,7 @@ Source4:	%{name}.csh
 Source5:	%{name}.config
 Source6:	%{name}.logrotate
 Patch0:		%{name}-user.patch
+Patch1:		%{name}-as-needed.patch
 URL:		http://distcc.samba.org/
 BuildRequires:	autoconf >= 2.53
 BuildRequires:	automake
@@ -122,6 +123,7 @@ Monitor GTK+ dla distcc.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 sed -i -e 's#PKGDATADIR#"%{_pixmapsdir}"#g' src/mon-gnome.c
 
