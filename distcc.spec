@@ -51,8 +51,8 @@ Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
-Requires:	gcc
-Requires:	gcc-c++
+Suggests:	gcc
+Suggests:	gcc-c++
 Provides:	group(distcc)
 Provides:	user(distcc)
 Obsoletes:	distcc < 2.1-2
