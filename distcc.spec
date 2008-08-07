@@ -5,12 +5,12 @@
 Summary:	Program to distribute compilation of C or C++
 Summary(pl.UTF-8):	Program do rozdzielania kompilacji programów w C lub C++
 Name:		distcc
-Version:	2.18.3
-Release:	3
+Version:	3.0
+Release:	0.1
 License:	GPL
 Group:		Development/Languages
-Source0:	http://distcc.samba.org/ftp/distcc/%{name}-%{version}.tar.bz2
-# Source0-md5:	0d6b80a1efc3a3d816c4f4175f63eaa2
+Source0:	http://distcc.googlecode.com/files/%{name}-%{version}.tar.bz2
+# Source0-md5:	a3cab94fb8514687805456bcca9a15ea
 Source1:	%{name}.inetd
 Source2:	%{name}.init
 Source3:	%{name}.sh
@@ -18,13 +18,13 @@ Source4:	%{name}.csh
 Source5:	%{name}.config
 Source6:	%{name}.logrotate
 Patch0:		%{name}-user.patch
-Patch1:		%{name}-as-needed.patch
-URL:		http://distcc.samba.org/
+URL:		http://www.distcc.org/
 BuildRequires:	autoconf >= 2.53
 BuildRequires:	automake
 %{?with_gnome:BuildRequires:	libgnomeui-devel >= 2.0}
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
+BuildRequires:	python-devel-tools
 BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	sed >= 4.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -68,6 +68,22 @@ distcc jest programem pozwalającym na dystrybucję kompilacji C lub C++
 na kilka maszyn w sieci. distcc powinien zawsze generować takie same
 rezultaty jak lokalna kompilacja, jest prosty w instalacji i użyciu
 oraz bardzo często dwa lub więcej razy szybszy niż lokalna kompilacja.
+
+%package include_server
+Summary:	conservative approximation of include dependencies for C/C++
+Group:		Daemons
+
+%description include_server
+include_server.py starts an include server process.  This process
+answers queries from distcc(1) clients about what files to include in
+C/C++ compilations. The include_server.py command itself terminates as
+soon as the include server has been spawned.
+
+%description include_server -l pl.UTF-8
+include_server.py wywołuje proces serwera include. Proces ten odpowiada
+na zapytania klientów distcc(1) dotyczące plików, które należy dołączyć
+na etapie kompilacji C/C++. Polecenie incluse_server.py kończy działanie
+jak tylko wywołany zostanie proces serwera.
 
 %package inetd
 Summary:	inetd configs for distcc
@@ -123,19 +139,19 @@ Monitor GTK+ dla distcc.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
 
 sed -i -e 's#PKGDATADIR#"%{_pixmapsdir}"#g' src/mon-gnome.c
 
 %build
-cp -f /usr/share/automake/config.* .
+%{__aclocal}
 %{__autoconf}
 %{__autoheader}
 %configure \
 	--enable-rfc2553 \
 	%{?with_gnome:--with-gnome}
 
-%{__make}
+%{__make} \
+	CC="%{__cc}"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -151,6 +167,10 @@ install %{SOURCE3} %{SOURCE4} $RPM_BUILD_ROOT/etc/profile.d
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/sysconfig/distccd
 install %{SOURCE6} $RPM_BUILD_ROOT/etc/logrotate.d/distccd
 
+%py_comp $RPM_BUILD_ROOT%{py_sitedir}
+%py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
+%py_postclean
+
 %if %{with gnome}
 mv $RPM_BUILD_ROOT%{_datadir}/%{name}/distccmon-gnome.desktop \
 	$RPM_BUILD_ROOT%{_desktopdir}
@@ -159,6 +179,8 @@ mv $RPM_BUILD_ROOT%{_datadir}/%{name}/distccmon-gnome-icon.png \
 %endif
 
 touch $RPM_BUILD_ROOT%{_var}/log/distcc
+rm -rf $RPM_BUILD_ROOT%{_docdir}/%{name}
+
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -195,7 +217,10 @@ fi
 %defattr(644,root,root,755)
 %doc AUTHORS NEWS README *.txt
 %attr(755,root,root) %{_bindir}/%{name}
+%attr(755,root,root) %{_bindir}/lsdistcc
+%attr(755,root,root) %{_bindir}/pump
 %{_mandir}/man?/%{name}.*
+%{_mandir}/man1/pump.1*
 %attr(755,root,root) /etc/profile.d/*sh
 
 %files common
@@ -205,6 +230,11 @@ fi
 %attr(755,root,root) %{_bindir}/%{name}d
 %{_mandir}/man?/%{name}d.*
 %attr(640,distcc,root) %ghost %{_var}/log/distcc
+
+%files include_server
+%defattr(644,root,root,755)
+%{py_sitedir}/include_server
+%{_mandir}/man1/include_server.1*
 
 %files inetd
 %defattr(644,root,root,755)
