@@ -70,7 +70,8 @@ rezultaty jak lokalna kompilacja, jest prosty w instalacji i użyciu
 oraz bardzo często dwa lub więcej razy szybszy niż lokalna kompilacja.
 
 %package include_server
-Summary:	conservative approximation of include dependencies for C/C++
+Summary:	Conservative approximation of include dependencies for C/C++
+Summary(pl.UTF-8):	Konserwatywna aproksymacja zależności nagłówków dla C/C++
 Group:		Daemons
 
 %description include_server
