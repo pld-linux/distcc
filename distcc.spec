@@ -24,7 +24,9 @@ BuildRequires:	automake
 %{?with_gnome:BuildRequires:	libgnomeui-devel >= 2.0}
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
+BuildRequires:	python-devel
 BuildRequires:	python-devel-tools
+BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	sed >= 4.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
