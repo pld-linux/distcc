@@ -152,6 +152,7 @@ sed -i -e 's#PKGDATADIR#"%{_pixmapsdir}"#g' src/mon-gnome.c
 	%{?with_gnome:--with-gnome}
 
 %{__make} \
+	WERROR_CFLAGS="" \
 	CC="%{__cc}"
 
 %install
