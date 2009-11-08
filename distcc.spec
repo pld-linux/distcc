@@ -5,12 +5,12 @@
 Summary:	Program to distribute compilation of C or C++
 Summary(pl.UTF-8):	Program do rozdzielania kompilacji programów w C lub C++
 Name:		distcc
-Version:	3.0
+Version:	3.1
 Release:	0.1
 License:	GPL
 Group:		Development/Languages
 Source0:	http://distcc.googlecode.com/files/%{name}-%{version}.tar.bz2
-# Source0-md5:	a3cab94fb8514687805456bcca9a15ea
+# Source0-md5:	a1a9d3853df7133669fffec2a9aab9f3
 Source1:	%{name}.inetd
 Source2:	%{name}.init
 Source3:	%{name}.sh
