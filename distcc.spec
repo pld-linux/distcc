@@ -1,3 +1,10 @@
+# TODO
+# - unpackaged files:
+#   /etc/default/distcc
+#   /etc/distcc/clients.allow
+#   /etc/distcc/commands.allow.sh
+#   /etc/distcc/hosts
+#   /usr/lib64/python2.6/site-packages/include_server-3.1-py2.6.egg-info
 #
 # Conditional build:
 %bcond_without	gnome	# build without gnome(monitor) support
@@ -77,16 +84,17 @@ Summary(pl.UTF-8):	Konserwatywna aproksymacja zależności nagłówków dla C/C+
 Group:		Daemons
 
 %description include_server
-include_server.py starts an include server process.  This process
+include_server.py starts an include server process. This process
 answers queries from distcc(1) clients about what files to include in
 C/C++ compilations. The include_server.py command itself terminates as
 soon as the include server has been spawned.
 
 %description include_server -l pl.UTF-8
-include_server.py wywołuje proces serwera include. Proces ten odpowiada
-na zapytania klientów distcc(1) dotyczące plików, które należy dołączyć
-na etapie kompilacji C/C++. Polecenie incluse_server.py kończy działanie
-jak tylko wywołany zostanie proces serwera.
+include_server.py wywołuje proces serwera include. Proces ten
+odpowiada na zapytania klientów distcc(1) dotyczące plików, które
+należy dołączyć na etapie kompilacji C/C++. Polecenie
+incluse_server.py kończy działanie jak tylko wywołany zostanie proces
+serwera.
 
 %package inetd
 Summary:	inetd configs for distcc
