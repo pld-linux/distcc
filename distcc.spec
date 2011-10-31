@@ -1,19 +1,17 @@
 # TODO
 # - unpackaged files:
-#   /etc/default/distcc
 #   /etc/distcc/clients.allow
 #   /etc/distcc/commands.allow.sh
 #   /etc/distcc/hosts
-#   /usr/lib64/python2.6/site-packages/include_server-3.1-py2.6.egg-info
 #
 # Conditional build:
 %bcond_without	gnome	# build without gnome(monitor) support
-#
+
 Summary:	Program to distribute compilation of C or C++
 Summary(pl.UTF-8):	Program do rozdzielania kompilacji programów w C lub C++
 Name:		distcc
 Version:	3.1
-Release:	0.1
+Release:	1
 License:	GPL
 Group:		Development/Languages
 Source0:	http://distcc.googlecode.com/files/%{name}-%{version}.tar.bz2
@@ -151,7 +149,7 @@ Monitor GTK+ dla distcc.
 %setup -q
 %patch0 -p1
 
-sed -i -e 's#PKGDATADIR#"%{_pixmapsdir}"#g' src/mon-gnome.c
+%{__sed} -i -e 's#PKGDATADIR#"%{_pixmapsdir}"#g' src/mon-gnome.c
 
 %build
 %{__aclocal}
@@ -173,11 +171,12 @@ install -d $RPM_BUILD_ROOT/etc/{sysconfig/rc-inetd,rc.d/init.d,profile.d,logrota
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-install %{SOURCE1} $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd/distccd
-install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/distcc
-install %{SOURCE3} %{SOURCE4} $RPM_BUILD_ROOT/etc/profile.d
-install %{SOURCE5} $RPM_BUILD_ROOT/etc/sysconfig/distccd
-install %{SOURCE6} $RPM_BUILD_ROOT/etc/logrotate.d/distccd
+install -p %{SOURCE1} $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd/distccd
+install -p %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/distcc
+cp -p %{SOURCE3} %{SOURCE4} $RPM_BUILD_ROOT/etc/profile.d
+%{__rm} $RPM_BUILD_ROOT%{_sysconfdir}/default/distcc
+cp -p %{SOURCE5} $RPM_BUILD_ROOT/etc/sysconfig/distccd
+cp -p %{SOURCE6} $RPM_BUILD_ROOT/etc/logrotate.d/distccd
 
 %py_comp $RPM_BUILD_ROOT%{py_sitedir}
 %py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
@@ -191,8 +190,7 @@ mv $RPM_BUILD_ROOT%{_datadir}/%{name}/distccmon-gnome-icon.png \
 %endif
 
 touch $RPM_BUILD_ROOT%{_var}/log/distcc
-rm -rf $RPM_BUILD_ROOT%{_docdir}/%{name}
-
+%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/%{name}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -246,6 +244,9 @@ fi
 %files include_server
 %defattr(644,root,root,755)
 %{py_sitedir}/include_server
+%if "%{py_ver}" > "2.4"
+%{py_sitedir}/include_server-*.egg-info
+%endif
 %{_mandir}/man1/include_server.1*
 
 %files inetd
