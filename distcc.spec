@@ -5,17 +5,17 @@
 #   /etc/distcc/hosts
 #
 # Conditional build:
-%bcond_without	gnome	# build without gnome(monitor) support
+%bcond_with	gnome	# build without gnome(monitor) support
 
 Summary:	Program to distribute compilation of C or C++
 Summary(pl.UTF-8):	Program do rozdzielania kompilacji programów w C lub C++
 Name:		distcc
-Version:	3.1
+Version:	3.4
 Release:	1
 License:	GPL
 Group:		Development/Languages
-Source0:	http://distcc.googlecode.com/files/%{name}-%{version}.tar.bz2
-# Source0-md5:	a1a9d3853df7133669fffec2a9aab9f3
+Source0:	https://github.com/distcc/distcc/archive/v%{version}/%{name}-%{version}.tar.gz
+# Source0-md5:	00523fd05f4cd9dd968e4e0ec09d774d
 Source1:	%{name}.inetd
 Source2:	%{name}.init
 Source3:	%{name}.sh
@@ -29,8 +29,8 @@ BuildRequires:	automake
 %{?with_gnome:BuildRequires:	libgnomeui-devel >= 2.0}
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
-BuildRequires:	python-devel
-BuildRequires:	python-devel-tools
+BuildRequires:	python3-devel
+BuildRequires:	python3-devel-tools
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	sed >= 4.0
@@ -151,6 +151,10 @@ Monitor GTK+ dla distcc.
 
 %{__sed} -i -e 's#PKGDATADIR#"%{_pixmapsdir}"#g' src/mon-gnome.c
 
+
+%{__sed} -E -i -e '1s,#!\s*/usr/bin/env\s+python3(\s|$),#!%{__python3}\1,' \
+	update-distcc-symlinks.py
+
 %build
 %{__aclocal}
 %{__autoconf}
@@ -178,9 +182,7 @@ cp -p %{SOURCE3} %{SOURCE4} $RPM_BUILD_ROOT/etc/profile.d
 cp -p %{SOURCE5} $RPM_BUILD_ROOT/etc/sysconfig/distccd
 cp -p %{SOURCE6} $RPM_BUILD_ROOT/etc/logrotate.d/distccd
 
-%py_comp $RPM_BUILD_ROOT%{py_sitedir}
-%py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
-%py_postclean
+#%py3_comp $RPM_BUILD_ROOT%{py_sitedir}
 
 %if %{with gnome}
 mv $RPM_BUILD_ROOT%{_datadir}/%{name}/distccmon-gnome.desktop \
@@ -229,12 +231,18 @@ fi
 %attr(755,root,root) %{_bindir}/%{name}
 %attr(755,root,root) %{_bindir}/lsdistcc
 %attr(755,root,root) %{_bindir}/pump
+%attr(755,root,root) %{_sbindir}/update-distcc-symlinks
 %{_mandir}/man?/%{name}.*
 %{_mandir}/man1/pump.1*
+%{_mandir}/man1/lsdistcc.1*
 %attr(755,root,root) /etc/profile.d/*sh
 
 %files common
 %defattr(644,root,root,755)
+%dir /etc/distcc
+/etc/distcc/clients.allow
+/etc/distcc/commands.allow.sh
+/etc/distcc/hosts
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/distccd
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/distccd
 %attr(755,root,root) %{_bindir}/%{name}d
@@ -243,10 +251,8 @@ fi
 
 %files include_server
 %defattr(644,root,root,755)
-%{py_sitedir}/include_server
-%if "%{py_ver}" > "2.4"
-%{py_sitedir}/include_server-*.egg-info
-%endif
+%{py3_sitedir}/include_server
+%{py3_sitedir}/include_server-*.egg-info
 %{_mandir}/man1/include_server.1*
 
 %files inetd
