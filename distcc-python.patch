@@ -1,0 +1,10 @@
+--- distcc-3.4/Makefile.in.orig	2023-09-20 21:24:52.121396599 +0200
++++ distcc-3.4/Makefile.in	2023-09-20 21:24:54.801382080 +0200
+@@ -1083,6 +1083,7 @@ install-include-server: include-server p
+ 	        --build-temp="$(include_server_builddir)" \
+ 	      install 					\
+ 	         --prefix="$(prefix)" 			\
++	         --optimize=2				\
+ 	         --record="$(include_server_builddir)/install.log.pre" \
+ 	         --root="$$DESTDIR"                     \
+ 	    || exit 1; \

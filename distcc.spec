@@ -5,7 +5,8 @@
 #   /etc/distcc/hosts
 #
 # Conditional build:
-%bcond_with	gnome	# build without gnome(monitor) support
+%bcond_without	gtk	# distccmon-gnome tool (monitor-gnome package)
+%bcond_with	gnome	# GNOME libraries support in distccmon-gnome (not ported to GNOME 3)
 
 Summary:	Program to distribute compilation of C or C++
 Summary(pl.UTF-8):	Program do rozdzielania kompilacji programów w C lub C++
@@ -23,14 +24,20 @@ Source4:	%{name}.csh
 Source5:	%{name}.config
 Source6:	%{name}.logrotate
 Patch0:		%{name}-user.patch
+Patch1:		%{name}-python.patch
 URL:		http://www.distcc.org/
-BuildRequires:	autoconf >= 2.53
+BuildRequires:	autoconf >= 2.69
 BuildRequires:	automake
-%{?with_gnome:BuildRequires:	libgnomeui-devel >= 2.0}
+# libiberty
+BuildRequires:	binutils-devel
+%{?with_gtk:BuildRequires:	gtk+3-devel}
+%{?with_gnome:BuildRequires:	libgnome-devel >= 3.0}
+%{?with_gnome:BuildRequires:	libgnomeui-devel >= 3.0}
+%{?with_gnome:BuildRequires:	pango-devel}
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
-BuildRequires:	python3-devel
-BuildRequires:	python3-devel-tools
+BuildRequires:	python3-devel >= 1:3.1
+BuildRequires:	python3-devel-tools >= 1:3.1
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	sed >= 4.0
@@ -148,9 +155,9 @@ Monitor GTK+ dla distcc.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %{__sed} -i -e 's#PKGDATADIR#"%{_pixmapsdir}"#g' src/mon-gnome.c
-
 
 %{__sed} -E -i -e '1s,#!\s*/usr/bin/env\s+python3(\s|$),#!%{__python3}\1,' \
 	update-distcc-symlinks.py
@@ -161,11 +168,12 @@ Monitor GTK+ dla distcc.
 %{__autoheader}
 %configure \
 	--enable-rfc2553 \
-	%{?with_gnome:--with-gnome}
+	%{?with_gnome:--with-gnome} \
+	%{?with_gtk:--with-gtk}
 
 %{__make} \
-	WERROR_CFLAGS="" \
-	CC="%{__cc}"
+	WERROR_CFLAGS=""
+#	CC="%{__cc}"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -181,15 +189,6 @@ cp -p %{SOURCE3} %{SOURCE4} $RPM_BUILD_ROOT/etc/profile.d
 %{__rm} $RPM_BUILD_ROOT%{_sysconfdir}/default/distcc
 cp -p %{SOURCE5} $RPM_BUILD_ROOT/etc/sysconfig/distccd
 cp -p %{SOURCE6} $RPM_BUILD_ROOT/etc/logrotate.d/distccd
-
-#%py3_comp $RPM_BUILD_ROOT%{py_sitedir}
-
-%if %{with gnome}
-mv $RPM_BUILD_ROOT%{_datadir}/%{name}/distccmon-gnome.desktop \
-	$RPM_BUILD_ROOT%{_desktopdir}
-mv $RPM_BUILD_ROOT%{_datadir}/%{name}/distccmon-gnome-icon.png \
-	$RPM_BUILD_ROOT%{_pixmapsdir}
-%endif
 
 touch $RPM_BUILD_ROOT%{_var}/log/distcc
 %{__rm} -r $RPM_BUILD_ROOT%{_docdir}/%{name}
@@ -228,14 +227,15 @@ fi
 %files
 %defattr(644,root,root,755)
 %doc AUTHORS NEWS README *.txt
-%attr(755,root,root) %{_bindir}/%{name}
+%attr(755,root,root) %{_bindir}/distcc
 %attr(755,root,root) %{_bindir}/lsdistcc
 %attr(755,root,root) %{_bindir}/pump
 %attr(755,root,root) %{_sbindir}/update-distcc-symlinks
-%{_mandir}/man?/%{name}.*
+%{_mandir}/man1/distcc.1*
 %{_mandir}/man1/pump.1*
 %{_mandir}/man1/lsdistcc.1*
-%attr(755,root,root) /etc/profile.d/*sh
+%attr(755,root,root) /etc/profile.d/distcc.csh
+%attr(755,root,root) /etc/profile.d/distcc.sh
 
 %files common
 %defattr(644,root,root,755)
@@ -245,14 +245,14 @@ fi
 /etc/distcc/hosts
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/distccd
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/distccd
-%attr(755,root,root) %{_bindir}/%{name}d
-%{_mandir}/man?/%{name}d.*
+%attr(755,root,root) %{_bindir}/distccd
+%{_mandir}/man1/distccd.1*
 %attr(640,distcc,root) %ghost %{_var}/log/distcc
 
 %files include_server
 %defattr(644,root,root,755)
 %{py3_sitedir}/include_server
-%{py3_sitedir}/include_server-*.egg-info
+%{py3_sitedir}/include_server-%{version}-py*.egg-info
 %{_mandir}/man1/include_server.1*
 
 %files inetd
@@ -266,12 +266,12 @@ fi
 %files monitor
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/distccmon-text
-%{_mandir}/man1/distccmon-text.*
+%{_mandir}/man1/distccmon-text.1*
 
-%if %{with gnome}
+%if %{with gtk}
 %files monitor-gnome
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/distccmon-gnome
-%{_desktopdir}/*.desktop
-%{_pixmapsdir}/*.png
+%{_desktopdir}/distccmon-gnome.desktop
+%{_pixmapsdir}/distccmon-gnome.png
 %endif
