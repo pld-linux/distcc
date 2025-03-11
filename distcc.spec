@@ -12,7 +12,7 @@ Summary:	Program to distribute compilation of C or C++
 Summary(pl.UTF-8):	Program do rozdzielania kompilacji programów w C lub C++
 Name:		distcc
 Version:	3.4
-Release:	
+Release:	2
 License:	GPL
 Group:		Development/Languages
 Source0:	https://github.com/distcc/distcc/archive/v%{version}/%{name}-%{version}.tar.gz
@@ -154,8 +154,8 @@ Monitor GTK+ dla distcc.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
+%patch -P 0 -p1
+%patch -P 1 -p1
 
 %{__sed} -i -e 's#PKGDATADIR#"%{_pixmapsdir}"#g' src/mon-gnome.c
 
